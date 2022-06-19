@@ -1,2 +1,2 @@
-# DCandSI
-Database Controller &amp; SQL Interpreter
+# DC&SI
+Database Controller &amp; Sql interpreter 1t
