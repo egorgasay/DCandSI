@@ -156,8 +156,8 @@ class Selector(Commands):
         decision_func(cur, table_name)
         
 
-#! остановился тут
-def TypeFinder(x):
+
+def type_finder(x):
     try:
         if x == True or x == False:
             return 'bool'
@@ -168,7 +168,9 @@ def TypeFinder(x):
             float(x)
             return 'float'
         except ValueError:
-            if x.lower().startswith('ENUM') :
+            if x.lower().startswith('enum') :
+                return 'enum'
+            elif x.lower().startswith('set') :
                 return 'enum'
             return 'str'
 
@@ -180,32 +182,44 @@ class Creator(Commands):
     def base_method(self, commands, con, DataOfDatabases):
         cur = super().base_method(commands, con)
         DataOfDatabases.table = input("Table name: ")
-        temp_data_of_columns = ''
-        temp_data_of_columnsArray = []
-        #
-        count_of_columns = int(input("Count of columns: "))
-        print("Example: Id INT AUTO_INCREMENT")
-        for i in range(1, count_of_columns+1):
-            columns = input(f"{i} : ")
-            temp_data_of_columnsArray.append(columns.split()[0])
-            temp_data_of_columns += columns + ", "
-            temp_data_of_columns.strip('\n')
-        #
-        temp_data_of_lines = []
-        count_of_lines = int(input("Count of lines: "))
-        temp_data_of_linesStringStorage = ''
-        for j in range(1, count_of_lines+1):
-            for x in range(1, count_of_columns+1):
-                columns = input(f"line:{j} item:{temp_data_of_columnsArray[x-1]} ") + ","
+        def create_and_fill(table_name):
+            #! СДЕЛАТЬ ЗАМЕНУ STR НА VARCHAR
+            temp_data_of_columns, temp_data_of_columnsArray, count_of_columns = create_only(table_name)
+            temp_data_of_lines = []
+            count_of_lines = int(input("Count of lines: "))
+            temp_data_of_linesStringStorage = ''
+            for j in range(1, count_of_lines+1):
+                for x in range(1, count_of_columns+1):
+                    columns = input(f"line:{j} item:{temp_data_of_columnsArray[x-1]} >")
+                    # todo: сделать обработку неправильного ввода, например когда забыли ввести INT
+                    columns = columns.split()
+                    columns_type = type_finder(columns[0])
+                    temp_data_of_linesStringStorage = columns_type.upper()+' '+str(*columns)
+                    temp_data_of_lines.append([temp_data_of_linesStringStorage])
+                print(temp_data_of_lines)
+        def create_only(table_name):
+            temp_data_of_columns = ''
+            temp_data_of_columnsArray = []
+            count_of_columns = int(input("Count of columns: "))
+            print("Example: Id INT AUTO_INCREMENT")
+            for i in range(1, count_of_columns+1):
+                columns = input(f"column:{i} : ")
+                temp_data_of_columnsArray.append(columns.split()[0])
+                temp_data_of_columns += columns + ", "
+                temp_data_of_columns = temp_data_of_columns.strip('\n')
+            try:
+                cur.execute(f'''CREATE TABLE {table_name} 
+                ({temp_data_of_columns[:-2]})''')
+                con.commit()
+                print("Success!")
+                #VALUES ({temp_data_of_lines[0]})''')
+            except Exception as e: print(e)
+            return temp_data_of_columns, temp_data_of_columnsArray, count_of_columns
+        
+        decision = input(f"Do you want to add some data in {DataOfDatabases.table}? (Y/n) n - default :")
+        if decision.lower() == 'y': create_and_fill(DataOfDatabases.table)
+        else: create_only(DataOfDatabases.table)
 
-                #columns = columns.split()
-                #temp_data_of_linesStringStorage += columns + " "
-            #temp_data_of_lines.append(columns)
-            #print(temp_data_of_linesStringStorage)
-        #
-        # cur.execute(f'''CREATE TABLE {DataOfDatabases.table} 
-        # ({temp_data_of_columns})
-        # VALUES ({})''')
 
 #DataOfDatabases = DatabasesNames(input('Database name: ', input("Table name: ")))
 
