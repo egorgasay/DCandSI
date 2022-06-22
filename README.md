@@ -1,7 +1,7 @@
 ## DC&SI
 # Database Controller &amp; Sql Interpreter
 ![alt text](https://i.imgur.com/qrlRBD1.png)
-<<<<<<< HEAD
+
 Script for creating, filling, and deleting databases.
 This makes it easier to work with data.
 You can also use it even if you don't know SQL syntax.
