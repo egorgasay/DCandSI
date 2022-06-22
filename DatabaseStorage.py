@@ -339,6 +339,7 @@ def main_menu():
     try:
         #clear()
         # TODO: подумать над Status()
+        # TODO: Возможность просмотра таблиц
         DataOfDatabases = Status()
         print('''
  _                                _                                 
@@ -378,6 +379,6 @@ def main_menu():
         input()
     finally:
         con.close()
-        #clear()
+        clear()
         print("Closed successfully")
 main_menu()
