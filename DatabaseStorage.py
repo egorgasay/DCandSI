@@ -64,11 +64,24 @@ class Selector(Commands):
                 table_name = input(">> FROM ")
                 # check the input for the presence of ALL
                 if user_columns.lower() == "all": user_columns = "*"
+                where = i if (i:='WHERE ' + input('>> WHERE ')) != 'WHERE ' else ''
+                group_by = i if (i:='GROUP BY ' + input('>> GROUP BY ')) != 'GROUP BY ' else ''
+                having = i if (i:='HAVING ' + input('>> HAVING ')) != 'HAVING ' else ''
+                order = i if (i:='ORDER BY ' + input('>> ORDER BY ')) != 'ORDER BY ' else ''
+                limit = i if (i:='LIMIT ' + input('>> LIMIT ')) != 'LIMIT ' else ''
+                optionalArray = [where, group_by, having, order, limit]
+                optionalArray = list(filter(None, optionalArray))
+                optional = ''
+                for j in optionalArray:
+                    optional += j + ' '
                 # execute cursor
-                cur.execute(f'''SELECT {user_columns} FROM {table_name}''')
-                #rows = cur.fetchall() # getting the data from the database
+                cur.execute(f'''SELECT {user_columns} FROM {table_name} {optional}''')
                 query_output_logic(cur.fetchall(), cur.description)
-                main_menu()
+                back = input("Go back to the main menu?")
+                if 'y' in back:
+                    main_menu()
+                else:
+                    decision_func(cur)
             elif decision == str(1):
                 '''complex query
                 '''
@@ -77,7 +90,7 @@ class Selector(Commands):
                     ''' choice between manualy type and execute ready query from a file
                     '''
                     print("Do you want to type query manualy(1) or execute ready query from a file(2) ?")
-                    decision2 = input("# ")
+                    decision2 = input("# ") 
                     clear()
                     #
                     if decision2 == str(1):
@@ -102,7 +115,7 @@ class Selector(Commands):
         decision_func(cur)
         
 
-print("Write EOF in the end of query or pres ENTER twice")
+
 def create_and_execute_ready_query(user_query):
     cur = con.cursor()
     query, enter = '', 1
@@ -176,6 +189,7 @@ class Creator(Commands):
                     item = input(f"line:{j} item:{temp_data_of_columnsArray[x-1]} >")
                     # todo: сделать обработку неправильного ввода, например когда забыли ввести INT
                     item = item.split()
+                    print(item)
                     item_type = type_finder(item[0])
                     # todo: доделать
                     if item_type == 'int':
@@ -185,26 +199,26 @@ class Creator(Commands):
                     else:
                         temp_data_of_linesStringStorage += '\''+item[0]+'\''+', '
                     
-                    #temp_data_of_lines.append(temp_data_of_linesStringStorage)
-                    #temp_data_of_linesStringStorage = ''
-                print(temp_data_of_linesStringStorage, temp_data_of_columnsArray, sep='\n')
+                temp_data_of_lines.append(temp_data_of_linesStringStorage)
+                
+                temp_data_of_linesStringStorage = ''
+                print(temp_data_of_lines, sep='\n')
             try:
-                #! СДЕЛАТЬ ДО КОЛ-ВА КОЛОНОК
                 temp_data_of_columns_ready = ''
-                # for i in (0, temp_data_of_columnsArray, 2):
-                #     temp_data_of_columns_ready.append(i)
                 for i in range(len(temp_data_of_columnsArray)):
                     temp_data_of_columns_ready += temp_data_of_columnsArray[i] + ", "
                     
-                cur.execute(f'''INSERT INTO {table_name} ({temp_data_of_columns_ready[:-2]})
-                VALUES ({temp_data_of_linesStringStorage[:-2]})''')
+                for j in range(count_of_lines):
+                    temp_data_of_linesStringStorage2 = temp_data_of_lines[j]
+                    cur.execute(f'''INSERT INTO {table_name} ({temp_data_of_columns_ready[:-2]})
+                    VALUES ({temp_data_of_linesStringStorage2[:-2]})''')
                 #! ТУТ ОСТАНОВИЛСЯ
                 con.commit()
                 print("Success!")
                 cur.execute(f'''SELECT * FROM {table_name}''')
-                #rows = cur.fetchall() # getting the data from the database
                 query_output_logic(cur.fetchall(), cur.description)
-                #VALUES ({temp_data_of_lines[0]})''')
+                input("Back to main menu")
+                main_menu()
             except Exception as e: print(e)
 
         def create_only(table_name):
@@ -270,7 +284,17 @@ def connec_db():
         # TODO: сделать подключение к бд и создать зашифрованный файл с информацией, при успешном коннекте
         #) TODO: сделать подключение к бд и заполение пользователем только пароля. все остальное хранится в атрибутах класса
         # TODO: сделать возможность подключения по строке подключения
+        # TODO: сделать обработку неполного ввода
         clear()
+        print('''
+ _                                _                                 
+| \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._   
+|_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |                                                                                     
+       __         ___                                     
+()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._ 
+(_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |  
+            |                        |                     
+''')
         empty_or_not = os.stat('info.txt')
         info = []
         empty_or_not = empty_or_not.st_size
@@ -305,6 +329,7 @@ def connec_db():
             port=info[-2]
             )
         print("Opened successfully")
+        clear()
         return con
     except psycopg2.OperationalError:
         print (f'Could not connect to database server. Check your credentials')
@@ -315,14 +340,19 @@ def main_menu():
         #clear()
         # TODO: подумать над Status()
         DataOfDatabases = Status()
-        # if DataOfDatabases.status == "Not connected":
-        #     con = connec_db(DataOfDatabases)
-        #     DataOfDatabases.status = "Connected"
-        #base_method(self, commands, con)
-        print("Select an option or start typing the query text")
+        print('''
+ _                                _                                 
+| \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._  1 Create a new table 
+|_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |   2 Delete a table                                                                                  
+       __         ___                                              3 Execute an query
+()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._         4 Exit
+(_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |          
+            |                        |                             Or type SQL query!
+''')
+        #print("Select an option or start typing the query text")
         print("Write EOF in the end of query or pres ENTER twice")
-        x = ['Create a new table', 'Delete a table', 'Execute an query', 'Exit']
-        for i in range(len(x)): print(str(i+1) + ' ' + x[i])
+        # x = ['Create a new table', 'Delete a table', 'Execute an query', 'Exit']
+        # for i in range(len(x)): print(str(i+1) + ' ' + x[i])
         commands = input("SQL >> ")
         #goodbye_status = Status()
         if commands == '1':
@@ -345,8 +375,9 @@ def main_menu():
             main_menu()
     except Exception as e: 
         print (f"Exception occurred while executing command. {e}")
+        input()
     finally:
         con.close()
-        clear()
+        #clear()
         print("Closed successfully")
 main_menu()
