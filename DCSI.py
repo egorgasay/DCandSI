@@ -18,15 +18,8 @@ class Commands:
         cur = con.cursor()
         return cur
 
-class Selector(Commands):
-    def base_method(self, commands, con):
-        ''' updates base_method from the Command module
-        '''
-        cur = super().base_method(commands, con)
-        #!@lru_cache
 
-
-        def file_executor(file_name=''):
+def file_executor(file_name=''):
             if file_name == '':
                 file_name = input("File name or path to the file: ")
             if file_name.count("/") != 0:
@@ -50,6 +43,13 @@ class Selector(Commands):
                 exit(0)
             file_executor(file_name)
 
+
+class Selector(Commands):
+    def base_method(self, commands, con):
+        ''' updates base_method from the Command module
+        '''
+        #cur = super().base_method(commands, con)
+        #!@lru_cache
 
         def decision_func(cur):
             '''Forces you to make a choice between two options
@@ -77,8 +77,8 @@ class Selector(Commands):
                 # execute cursor
                 cur.execute(f'''SELECT {user_columns} FROM {table_name} {optional}''')
                 query_output_logic(cur.fetchall(), cur.description)
-                back = input("Go back to the main menu?")
-                if 'y' in back:
+                back = input("Go back to the main menu? (n - default)")
+                if 'y' in back.lower():
                     main_menu()
                 else:
                     decision_func(cur)
@@ -117,7 +117,7 @@ class Selector(Commands):
 
 
 def create_and_execute_ready_query(user_query):
-    cur = con.cursor()
+    #cur = con.cursor()
     query, enter = '', 1
     #user_query = input(">>>: ").strip("\n")
     text_of_query = [user_query]
@@ -138,7 +138,7 @@ def create_and_execute_ready_query(user_query):
             for line in range(len(text_of_query)):
                 f.write(text_of_query[line]+'\n')
         os.system(f"{file_name}")
-        print(f"Saved in {filename}")
+        print(f"Saved in {file_name}")
         wait_until_done = input("# Waiting for your changes...(ENTER) ")
         file_executor(file_name)
         con.commit()
@@ -157,7 +157,7 @@ def create_and_execute_ready_query(user_query):
         with open(file_name, 'w+') as f:
             for line in range(len(text_of_query)):
                 f.write(text_of_query[line]+'\n')
-        print(f"Saved in {file_name}")
+        input(f"Saved in {file_name}")
 def type_finder(x):
     try:
         if x == True or x == False:
@@ -172,12 +172,12 @@ def type_finder(x):
             if x.lower().startswith('enum') :
                 return 'enum'
             elif x.lower().startswith('set') :
-                return 'enum'
+                return 'set'
             return 'str'
 
 class Creator(Commands):
     def base_method(self, commands, con):
-        cur = super().base_method(commands, con)
+        #cur = super().base_method(commands, con)
         table_name = input("Table name: ")
         def create_and_fill(table_name):
             temp_data_of_columns, temp_data_of_columnsArray, count_of_columns = create_only(table_name)
@@ -189,7 +189,7 @@ class Creator(Commands):
                     item = input(f"line:{j} item:{temp_data_of_columnsArray[x-1]} >")
                     # todo: сделать обработку неправильного ввода, например когда забыли ввести INT
                     item = item.split()
-                    print(item)
+                    #print(item)
                     item_type = type_finder(item[0])
                     # todo: доделать
                     if item_type == 'int':
@@ -202,7 +202,7 @@ class Creator(Commands):
                 temp_data_of_lines.append(temp_data_of_linesStringStorage)
                 
                 temp_data_of_linesStringStorage = ''
-                print(temp_data_of_lines, sep='\n')
+                #print(temp_data_of_lines, sep='\n')
             try:
                 temp_data_of_columns_ready = ''
                 for i in range(len(temp_data_of_columnsArray)):
@@ -250,7 +250,7 @@ class Deletor(Commands):
         self.table_name = table_name
     
     def base_method(self, con, commands):
-        cur = super().base_method(commands, con)
+        #cur = super().base_method(commands, con)
         print(f"Confirm deleting the {self.table_name}. Enter the database name.")
         decision = input("SQL: DROP TABLE ")
         if decision == self.table_name:
@@ -329,11 +329,15 @@ def connec_db():
             port=info[-2]
             )
         print("Opened successfully")
+        global cur
+        cur = con.cursor()
         clear()
         return con
     except psycopg2.OperationalError:
         print (f'Could not connect to database server. Check your credentials')
         exit(0)
+
+
 connec_db()
 def main_menu():
     try:
