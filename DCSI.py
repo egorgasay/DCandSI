@@ -362,12 +362,8 @@ def main_menu():
 (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |          
             |                        |                             Or type SQL query!
 ''')
-        #print("Select an option or start typing the query text")
         print("Write EOF in the end of query or pres ENTER twice")
-        # x = ['Create a new table', 'Delete a table', 'Execute an query', 'Exit']
-        # for i in range(len(x)): print(str(i+1) + ' ' + x[i])
         commands = input("SQL >> ")
-        #goodbye_status = Status()
         if commands == '1':
             clear()
             command = Creator(1)
