@@ -3,7 +3,9 @@
 ![alt text](https://i.imgur.com/qrlRBD1.png)
 
 Script for creating, filling, and deleting databases.
+
 This makes it easier to work with data.
+
 You can also use it even if you don't know SQL syntax.
 
 ![alt text](https://i.imgur.com/m2bmSAH.jpeg)
