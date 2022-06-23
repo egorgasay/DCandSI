@@ -34,7 +34,10 @@ def file_executor(file_name=''):
                 print (f"Exception occurred while executing command. {e}")
                 file_executor()
             query =  ' '.join(text_of_query)
-            cur.execute(f'''{query}''')
+            try:
+                cur.execute(f'''{query}''')
+            except:
+                cur.execute("rollback")
             query_output_logic(cur.fetchall(), cur.description)
             decision = input("Do you want to run the query again? (Y/n) y - Default: ")
             if decision.lower() == 'n' or decision.lower() == 'no':
@@ -54,7 +57,16 @@ class Selector(Commands):
         def decision_func(cur):
             '''Forces you to make a choice between two options
             '''
-            print("Do you want to type query manualy (1) or use auto(2) query?")
+            print('''
+ _                                _                                 
+| \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._   1 Type query manualy
+|_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |                                                                                     
+       __         ___                                               2 Simple query
+()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._          
+(_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |  
+            |                        |                              3 Run from file
+''')
+            #print("Do you want to type query manualy (1) or use auto(2) query?")
             decision = input("# ")
             if decision == str(2):
                 '''simple auto query
@@ -75,7 +87,10 @@ class Selector(Commands):
                 for j in optionalArray:
                     optional += j + ' '
                 # execute cursor
-                cur.execute(f'''SELECT {user_columns} FROM {table_name} {optional}''')
+                try:
+                    cur.execute(f'''SELECT {user_columns} FROM {table_name} {optional}''')
+                except:
+                    cur.execute("rollback")
                 query_output_logic(cur.fetchall(), cur.description)
                 back = input("Go back to the main menu? (n - default)")
                 if 'y' in back.lower():
@@ -85,29 +100,15 @@ class Selector(Commands):
             elif decision == str(1):
                 '''complex query
                 '''
-                print("This module in development mode")
-                def decision2_func():
-                    ''' choice between manualy type and execute ready query from a file
-                    '''
-                    print("Do you want to type query manualy(1) or execute ready query from a file(2) ?")
-                    decision2 = input("# ") 
-                    clear()
-                    #
-                    if decision2 == str(1):
-                        print("SQL ")
-                        user_query = input("SQL >> ").strip("\n")
-                        create_and_execute_ready_query(user_query)
-                    elif decision2 == str(2):
-                        file_executor()
-                        main_menu()
-                        # print("Closed successfully")
-                        exit(0)
-                    else:
-                        # TODO: сделать try except error рекурсии
-                        print("Please select 1 or 2")
-                        decision2_func()
-                decision2_func()
-
+                print("SQL ")
+                user_query = input("SQL >> ").strip("\n")
+                create_and_execute_ready_query(user_query)
+                main_menu()
+            elif decision == str(3):
+                file_executor()
+                main_menu()
+                # print("Closed successfully")
+                exit(0)
             else:
                 # TODO: сделать try except error рекурсии
                 print("Please select 1 or 2")
@@ -117,7 +118,7 @@ class Selector(Commands):
 
 
 def create_and_execute_ready_query(user_query):
-    #cur = con.cursor()
+    cur = con.cursor()
     query, enter = '', 1
     #user_query = input(">>>: ").strip("\n")
     text_of_query = [user_query]
@@ -146,7 +147,10 @@ def create_and_execute_ready_query(user_query):
         # print("Closed successfully")
         exit(0)
     #
-    cur.execute(f'''{query}''')
+    try:
+        cur.execute(f'''{query}''')
+    except:
+        cur.execute("rollback")
     query_output_logic(cur.fetchall(), cur.description)
     save_decision = input("Save the query text? (Y/n): ")
     if save_decision.lower() == 'n' or save_decision.lower() == 'no':                
@@ -218,11 +222,17 @@ class Creator(Commands):
                     
                 for j in range(count_of_lines):
                     temp_data_of_linesStringStorage2 = temp_data_of_lines[j]
-                    cur.execute(f'''INSERT INTO {table_name} ({temp_data_of_columns_ready[:-2]})
+                    try:
+                        cur.execute(f'''INSERT INTO {table_name} ({temp_data_of_columns_ready[:-2]}
                     VALUES ({temp_data_of_linesStringStorage2[:-2]})''')
+                    except:
+                        cur.execute("rollback")
                 con.commit()
                 print("Success!")
-                cur.execute(f'''SELECT * FROM {table_name}''')
+                try: 
+                    cur.execute(f'''SELECT * FROM {table_name}''')
+                except:
+                    cur.execute("rollback")
                 query_output_logic(cur.fetchall(), cur.description)
                 input("Back to main menu")
                 main_menu()
@@ -244,7 +254,8 @@ class Creator(Commands):
                 con.commit()
                 print("Success!")
                 #VALUES ({temp_data_of_lines[0]})''')
-            except Exception as e: print(e)
+            except:
+                cur.execute("rollback")
             return temp_data_of_columns, temp_data_of_columnsArray, count_of_columns
         
         decision = input(f"Do you want to add some data in {table_name}? (Y/n) n - default :")
@@ -261,7 +272,10 @@ class Deletor(Commands):
         print(f"Confirm deleting the {self.table_name}. Enter the database name.")
         decision = input("SQL: DROP TABLE ")
         if decision == self.table_name:
-            cur.execute(f'''DROP TABLE IF EXISTS {self.table_name}''')
+            try:
+                cur.execute(f'''DROP TABLE IF EXISTS {self.table_name}''')
+            except:
+                cur.execute("rollback")
             con.commit()
             print(f"DROP TABLE {self.table_name} was completed successfully!")
             main_menu()
@@ -362,6 +376,14 @@ def main_menu():
 (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |          
             |                        |                             Or type SQL query!
 ''')
+        try:
+
+            cur.execute("""SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;""")
+            print("Available tables:", *(str(*i) for i in cur.fetchall()))
+            
+        except:
+            print("You don't have tables in your schema! \nLet's create a new table!")
+            cur.execute("rollback")
         print("Write EOF in the end of query or pres ENTER twice")
         commands = input("SQL >> ")
         if commands == '1':
@@ -384,7 +406,8 @@ def main_menu():
             main_menu()
     except Exception as e: 
         print (f"Exception occurred while executing command. {e}")
-        input()
+        input('Back to main menu')
+        main_menu()
     finally:
         con.close()
         clear()
