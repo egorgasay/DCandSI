@@ -184,25 +184,33 @@ class Creator(Commands):
             temp_data_of_lines = []
             count_of_lines = int(input("Count of lines: "))
             temp_data_of_linesStringStorage = ''
-            for j in range(1, count_of_lines+1):
-                for x in range(1, count_of_columns+1):
-                    item = input(f"line:{j} item:{temp_data_of_columnsArray[x-1]} >")
-                    # todo: сделать обработку неправильного ввода, например когда забыли ввести INT
-                    item = item.split()
-                    #print(item)
-                    item_type = type_finder(item[0])
-                    # todo: доделать
-                    if item_type == 'int':
-                        temp_data_of_linesStringStorage += item[0] + ', '
-                    elif item_type == 'float':
-                        temp_data_of_linesStringStorage += item[0] + ', '
-                    else:
-                        temp_data_of_linesStringStorage += '\''+item[0]+'\''+', '
+            try:
+                for j in range(1, count_of_lines+1):
+                    for x in range(1, count_of_columns+1):
+                        item = input(f"line:{j} item:{temp_data_of_columnsArray[x-1]} >")
+                        # todo: сделать обработку неправильного ввода, например когда забыли ввести INT
+                        item = item.split()
+                        #print(item)
+                        item_type = type_finder(item[0])
+                        def if_item_is_null(item, temp_data_of_columnsArray):
+                            if 'null' in item or 'Null' in item or 'NULL' in item:
+                                print(f"item:{temp_data_of_columnsArray[x-1]} can't be null")
+                                item = input(f"line:{j} item:{temp_data_of_columnsArray[x-1]} >")
+                                if_item_is_null(item, temp_data_of_columnsArray[x-1])
+                            return item
+                        item = if_item_is_null(item, temp_data_of_columnsArray)
+                        if item_type == 'int':
+                            temp_data_of_linesStringStorage += item[0] + ', '
+                        elif item_type == 'float':
+                            temp_data_of_linesStringStorage += item[0] + ', '
+                        else:
+                            temp_data_of_linesStringStorage += '\''+item[0]+'\''+', '
+                        
+                    temp_data_of_lines.append(temp_data_of_linesStringStorage)
                     
-                temp_data_of_lines.append(temp_data_of_linesStringStorage)
-                
-                temp_data_of_linesStringStorage = ''
-                #print(temp_data_of_lines, sep='\n')
+                    temp_data_of_linesStringStorage = ''
+                    #print(temp_data_of_lines, sep='\n')
+            except Exception as e: print(e)
             try:
                 temp_data_of_columns_ready = ''
                 for i in range(len(temp_data_of_columnsArray)):
@@ -257,7 +265,8 @@ class Deletor(Commands):
             con.commit()
             print(f"DROP TABLE {self.table_name} was completed successfully!")
             main_menu()
-        main_menu()
+        input("The names of the tables do not match!")
+        base_method(con, commands)
 
 #DataOfDatabases = DatabasesNames(input('Database name: ', input("Table name: ")))
 def query_output_logic(rows, columns_from_cur):
