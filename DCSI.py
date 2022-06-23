@@ -212,7 +212,6 @@ class Creator(Commands):
                     temp_data_of_linesStringStorage2 = temp_data_of_lines[j]
                     cur.execute(f'''INSERT INTO {table_name} ({temp_data_of_columns_ready[:-2]})
                     VALUES ({temp_data_of_linesStringStorage2[:-2]})''')
-                #! ТУТ ОСТАНОВИЛСЯ
                 con.commit()
                 print("Success!")
                 cur.execute(f'''SELECT * FROM {table_name}''')
