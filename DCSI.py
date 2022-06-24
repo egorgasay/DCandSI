@@ -200,9 +200,7 @@ class Creator(Commands):
                                 if_item_is_null(item, temp_data_of_columnsArray[x-1])
                             return item
                         item = if_item_is_null(item, temp_data_of_columnsArray)
-                        if item_type == 'int':
-                            temp_data_of_linesStringStorage += item[0] + ', '
-                        elif item_type == 'float':
+                        if item_type == 'int' or item_type == 'float':
                             temp_data_of_linesStringStorage += item[0] + ', '
                         else:
                             temp_data_of_linesStringStorage += '\''+item[0]+'\''+', '
@@ -211,19 +209,26 @@ class Creator(Commands):
                     
                     temp_data_of_linesStringStorage = ''
                     #print(temp_data_of_lines, sep='\n')
-            except Exception as e: print(e)
+            except Exception as e: 
+                print(e)
+                input("Back to main menu")
+                main_menu()
             try:
                 temp_data_of_columns_ready = ''
+                temp_data_of_linesStringStorage2 = ''
                 for i in range(len(temp_data_of_columnsArray)):
                     temp_data_of_columns_ready += temp_data_of_columnsArray[i] + ", "
                     
                 for j in range(count_of_lines):
                     temp_data_of_linesStringStorage2 = temp_data_of_lines[j]
                     try:
-                        cur.execute(f'''INSERT INTO {table_name} ({temp_data_of_columns_ready[:-2]}
-                    VALUES ({temp_data_of_linesStringStorage2[:-2]})''')
-                    except:
+                        cur.execute(f'''INSERT INTO {table_name} ({temp_data_of_columns_ready[:-2]})
+                        VALUES ({temp_data_of_linesStringStorage2[:-2]})''')
+                    except Exception as e: 
                         cur.execute("rollback")
+                        print(e)
+                        input('Something went wrong while inserting lines..')
+                        main_menu()
                 con.commit()
                 print("Success!")
                 try: 
@@ -233,7 +238,10 @@ class Creator(Commands):
                 query_output_logic(cur.fetchall(), cur.description)
                 input("Back to main menu")
                 main_menu()
-            except Exception as e: print(e)
+            except Exception as e: 
+                print(e)
+                input("Back to main menu")
+                main_menu()
 
         def create_only(table_name):
             temp_data_of_columns = ''
@@ -251,7 +259,8 @@ class Creator(Commands):
                 con.commit()
                 print("Success!")
                 #VALUES ({temp_data_of_lines[0]})''')
-            except:
+            except Exception as e:
+                print("Error!", e)
                 cur.execute("rollback")
             return temp_data_of_columns, temp_data_of_columnsArray, count_of_columns
         
@@ -277,7 +286,7 @@ class Deletor(Commands):
             print(f"DROP TABLE {self.table_name} was completed successfully!")
             main_menu()
         input("The names of the tables do not match!")
-        base_method(con, commands)
+        main_menu()
 
 #DataOfDatabases = DatabasesNames(input('Database name: ', input("Table name: ")))
 def query_output_logic(rows, columns_from_cur):
@@ -409,6 +418,6 @@ def main_menu():
         main_menu()
     finally:
         con.close()
-        clear()
+        #clear()
         print("Closed successfully")
 main_menu()
