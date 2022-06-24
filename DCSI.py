@@ -83,9 +83,7 @@ class Selector(Commands):
                 limit = i if (i:='LIMIT ' + input('>> LIMIT ')) != 'LIMIT ' else ''
                 optionalArray = [where, group_by, having, order, limit]
                 optionalArray = list(filter(None, optionalArray))
-                optional = ''
-                for j in optionalArray:
-                    optional += j + ' '
+                optional = ''.join(optionalArray) 
                 # execute cursor
                 try:
                     cur.execute(f'''SELECT {user_columns} FROM {table_name} {optional}''')
@@ -120,7 +118,6 @@ class Selector(Commands):
 def create_and_execute_ready_query(user_query):
     cur = con.cursor()
     query, enter = '', 1
-    #user_query = input(">>>: ").strip("\n")
     text_of_query = [user_query]
     while user_query != 'EOF' and enter != 2:                
         query += user_query + " "
@@ -407,6 +404,8 @@ def main_menu():
     except Exception as e: 
         print (f"Exception occurred while executing command. {e}")
         input('Back to main menu')
+        main_menu()
+    except KeyboardInterrupt:
         main_menu()
     finally:
         con.close()
