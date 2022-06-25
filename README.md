@@ -1,6 +1,6 @@
 ## DC&SI
 # Database Controller &amp; Sql Interpreter
-![alt text](https://i.imgur.com/qrlRBD1.png)
+![alt text](https://i.imgur.com/TOsJ3tv.png)
 
 Script for creating, filling, and deleting databases.
 
