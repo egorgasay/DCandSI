@@ -6,6 +6,7 @@ import platform
 from clear_screen import clear
 from getpass import getpass
 import stdiomask
+import pyodbc
 
 
 class Status:
@@ -27,22 +28,22 @@ class Selector(Commands):
     def base_method(self, commands, con):
         ''' updates base_method from the Command module
         '''
-        #cur = super().base_method(commands, con)
+        # cur = super().base_method(commands, con)
         #!@lru_cache
 
         def decision_func(cur):
             '''Forces you to make a choice between two options
             '''
             print('''
-             _                                _                                 
+             _                                _
             | \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._   1 Type query manualy
-            |_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |                                                                                     
+            |_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |
                    __         ___                                               2 Simple query
-            ()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._          
-            (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |  
+            ()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._
+            (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |
                         |                        |                              3 Run from file
             ''')
-            #print("Do you want to type query manualy (1) or use auto(2) query?")
+            # print("Do you want to type query manualy (1) or use auto(2) query?")
             decision = input("# ")
             if decision == str(2):
                 '''simple auto query
@@ -100,7 +101,7 @@ class Selector(Commands):
 
 class Creator(Commands):
     def base_method(self, commands, con):
-        #cur = super().base_method(commands, con)
+        # cur = super().base_method(commands, con)
         table_name = input("Table name: ")
 
         def create_and_fill(table_name):
@@ -138,7 +139,7 @@ class Creator(Commands):
                     temp_data_of_lines.append(temp_data_of_linesStringStorage)
 
                     temp_data_of_linesStringStorage = ''
-                    #print(temp_data_of_lines, sep='\n')
+                    # print(temp_data_of_lines, sep='\n')
             except Exception as e:
                 print(e)
                 input("Back to main menu")
@@ -184,7 +185,7 @@ class Creator(Commands):
                 temp_data_of_columns += columns + ", "
                 temp_data_of_columns = temp_data_of_columns.strip('\n')
             try:
-                cur.execute(f'''CREATE TABLE {table_name} 
+                cur.execute(f'''CREATE TABLE {table_name}
                 ({temp_data_of_columns[:-2]})''')
                 con.commit()
                 print("Success!")
@@ -192,6 +193,7 @@ class Creator(Commands):
             except Exception as e:
                 print("Error!", e)
                 cur.execute("rollback")
+
             return temp_data_of_columns, temp_data_of_columnsArray, count_of_columns
 
         decision = input(
@@ -200,6 +202,7 @@ class Creator(Commands):
             create_and_fill(table_name)
         else:
             create_only(table_name)
+            main_menu()
 
 
 class Deletor(Commands):
@@ -207,7 +210,7 @@ class Deletor(Commands):
         self.table_name = table_name
 
     def base_method(self, con, commands):
-        #cur = super().base_method(commands, con)
+        # cur = super().base_method(commands, con)
         print(
             f"Confirm deleting the {self.table_name}. Enter the database name.")
         decision = input("SQL: DROP TABLE ")
@@ -331,7 +334,7 @@ def file_executor(file_name=''):
     decision = input("Do you want to run the query again? (Y/n) y - Default: ")
     if decision.lower() == 'n' or decision.lower() == 'no':
         main_menu()
-        #print("Closed successfully")
+        # print("Closed successfully")
         exit(0)
     file_executor(file_name)
 
@@ -344,15 +347,17 @@ def connec_db():
         # TODO: сделать обработку неполного ввода
         clear()
         print('''
-         _                                _                                 
-        | \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._   
-        |_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |                                                                                     
-               __         ___                                     
-        ()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._ 
-        (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |  
-                    |                        |                     
+         _                                _
+        | \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._
+        |_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |
+               __         ___
+        ()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._
+        (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |
+                    |                        |
         ''')
+
         empty_or_not = os.stat('info.txt')
+        global info
         info = []
         empty_or_not = empty_or_not.st_size
 
@@ -363,11 +368,44 @@ def connec_db():
                 return info
 
         def empty():
-            with open('info.txt', 'w+') as f:
-                f.write(input("Database name: ") + '\n')
-                f.write(input("Host name: ") + '\n')
-                f.write(input("Port: ") + '\n')
-                f.write(input("User name: ") + '\n')
+            global postgres_or_mssm
+            postgres_or_mssm = input('1 PostgreSQL\n2 MS SQL Server\n# ')
+            if postgres_or_mssm == '1':
+                with open('info.txt', 'w+') as f:
+                    f.write('1' + '\n')
+                    f.write(input("Database name: ") + '\n')
+                    f.write(input("Host name: ") + '\n')
+                    f.write(input("Port: ") + '\n')
+                    f.write(input("User name: ") + '\n')
+            elif postgres_or_mssm == '2':
+                print("1 Connection string for MS SQL Server")
+                print("2 Connection credentials for MS SQL Server")
+                global str_or_cred
+                str_or_cred = input("# ")
+                if str_or_cred == '1':
+                    with open('info.txt', 'w+') as f:
+                        f.write(input("Connection string: ") + '\n')
+                elif str_or_cred == '2':
+                    with open('info.txt', 'w+') as f:
+                        f.write('2' + '\n')
+                        f.write('2' + '\n')
+                        f.write(input("Server: ") + '\n')
+                        f.write(input("Database: ") + '\n')
+                        global trusted_connection
+                        trusted_connection = input(
+                            "Trusted_Connection: True - default ")
+                        if trusted_connection.lower() == 'false':
+                            f.write('n' + '\n')
+                            f.write(input("User name: ") + '\n')
+                        else:
+                            f.write('y' + '\n')
+                else:
+                    input('Please, enter 1 or 2')
+                    connec_db()
+            else:
+                input('Please, enter 1 or 2')
+                connec_db()
+
             return read_from_non_empty_file()
         if empty_or_not == 0:
             empty()
@@ -380,13 +418,36 @@ def connec_db():
 
         # print(info)
         global con
-        con = psycopg2.connect(
-            database=info[-4],
-            user=info[-1],
-            password=stdiomask.getpass(),
-            host=info[-3],
-            port=info[-2]
-        )
+        con = ''
+        if info[0] == '1':
+            con = psycopg2.connect(
+                database=info[-4],
+                user=info[-1],
+                password=stdiomask.getpass(),
+                host=info[-3],
+                port=info[-2]
+            )
+        # postgres or ms sql
+        elif info[0] == '2':
+            # str or cred
+            if info[1] == '1':
+                # add connect by str
+                pass
+            else:
+                # true con or not
+                if info[2] == 'n':
+                    # add Trusted_Connection=no
+                    pass
+                else:
+                    try:
+                        con = pyodbc.connect(
+                            "Driver={ODBC Driver 17 for SQL Server};"
+                            "Server=" + info[-2] + ";"
+                            "Database=" + info[-1] + ";"
+                            "Trusted_Connection=yes;"
+                        )
+                    except:
+                        print("Output error in development")
         print("Opened successfully")
         global cur
         cur = con.cursor()
@@ -407,24 +468,30 @@ def main_menu():
         # TODO: Возможность просмотра таблиц
         DataOfDatabases = Status()
         print('''
-         _                                _                                 
-        | \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._  1 Create a new table 
-        |_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |   2 Delete a table                                                                                  
+         _                                _
+        | \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._  1 Create a new table
+        |_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |   2 Delete a table
                __         ___                                              3 Execute an query
         ()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._         4 Exit
-        (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |          
+        (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |
                     |                        |                             Or type SQL query!
         ''')
         try:
+            if info[0] == '1':
+                cur.execute(
+                    """SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;""")
+            else:
+                cur.execute(
+                    """SELECT name FROM sys.tables""")
+            tables_names = [*(str(*i) for i in cur.fetchall())]
+            print(
+                f"Available tables: ", ', '.join(tables_names), ".", sep="")
 
-            cur.execute(
-                """SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;""")
-            print("Available tables:", *(str(*i) for i in cur.fetchall()))
-
-        except:
+        except Exception as e:
+            print(e)
             print("You don't have tables in your schema! \nLet's create a new table!")
             cur.execute("rollback")
-        print("Write EOF in the end of query or pres ENTER twice")
+        print("Write EOF in the end of query or pres ENTER twice.")
         commands = input("SQL >> ")
         if commands == '1':
             clear()
@@ -442,7 +509,7 @@ def main_menu():
             exit(0)
         else:
             create_and_execute_ready_query(commands.strip("\n"))
-            #print (f"Unknown option '{unknown_command}'")
+            # print (f"Unknown option '{unknown_command}'")
             main_menu()
     except Exception as e:
         print(f"Exception occurred while executing command. {e}")
@@ -451,9 +518,13 @@ def main_menu():
     except KeyboardInterrupt:
         main_menu()
     finally:
-        con.close()
+        try:
+            con.close()
+        except:
+            print()
         clear()
         print("Closed successfully")
 
 
-main_menu()
+if __name__ == "__main__":
+    main_menu()
