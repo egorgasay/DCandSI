@@ -22,7 +22,7 @@ py -m pip install -r requirements.txt
 ```
 py DCSI.py 
 ```
-After launching, you can type text of query or choose one of 1-3 options.
+After launching, you can type text of query or choose one of 1-4 options.
 
 # Requirements
 1. Python 3.10 or higher.
