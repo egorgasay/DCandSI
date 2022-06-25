@@ -8,10 +8,10 @@ This makes it easier to work with data.
 
 You can also use it even if you don't know SQL syntax.
 
-![alt text](https://i.imgur.com/m2bmSAH.jpeg)
+![alt text](https://i.imgur.com/nXcdGrc.png)
 You don't need to enter database information every time (only password).
 
-![alt text](https://i.imgur.com/DWVIccX.jpeg)
+![alt text](https://i.imgur.com/8syU9eC.png)
 View of the main menu.
 # Install
 ```
