@@ -452,7 +452,7 @@ def main_menu():
         main_menu()
     finally:
         con.close()
-        # clear()
+        clear()
         print("Closed successfully")
 
 
