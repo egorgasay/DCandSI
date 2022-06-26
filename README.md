@@ -11,7 +11,7 @@ You can also use it even if you don't know SQL syntax.
 ![alt text](https://i.imgur.com/nXcdGrc.png)
 You don't need to enter database information every time (only password).
 
-![alt text](https://i.imgur.com/8syU9eC.png)
+![alt text](https://i.imgur.com/0W5Vrfk.png)
 View of the main menu.
 # Install
 ```

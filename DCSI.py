@@ -9,30 +9,15 @@ import stdiomask
 import pyodbc
 
 
-class Status:
-    status = "N"
-
-
-class Commands:
-    table = 'table'
-
-    def __init__(self, command):
-        self.command = command
-
-    def base_method(self, commands, con):
-        cur = con.cursor()
-        return cur
-
-
-class Selector(Commands):
-    def base_method(self, commands, con):
-        ''' updates base_method from the Command module
+class Query:
+    ''' Query generator
+    '''
+    def base_method(self):
+        ''' Query input logic
         '''
-        # cur = super().base_method(commands, con)
-        #!@lru_cache
 
         def decision_func(cur):
-            '''Forces you to make a choice between two options
+            ''' Forces you to make a choice between two options
             '''
             print('''
              _                                _
@@ -40,10 +25,9 @@ class Selector(Commands):
             |_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |
                    __         ___                                               2 Simple query
             ()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._
-            (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |
-                        |                        |                              3 Run from file
+            (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |           3 Run from file
+                        |                        |                              
             ''')
-            # print("Do you want to type query manualy (1) or use auto(2) query?")
             decision = input("# ")
             if decision == str(2):
                 '''simple auto query
@@ -99,9 +83,10 @@ class Selector(Commands):
         decision_func(cur)
 
 
-class Creator(Commands):
-    def base_method(self, commands, con):
-        # cur = super().base_method(commands, con)
+class Creator:
+    ''' To create tables
+    '''
+    def base_method(self):
         table_name = input("Table name: ")
 
         def create_and_fill(table_name):
@@ -117,7 +102,6 @@ class Creator(Commands):
                             f"line:{j} item:{temp_data_of_columnsArray[x-1]} >")
                         # todo: сделать обработку неправильного ввода, например когда забыли ввести INT
                         item = item.split()
-                        # print(item)
                         item_type = type_finder(item[0])
 
                         def if_item_is_null(item, temp_data_of_columnsArray):
@@ -139,7 +123,6 @@ class Creator(Commands):
                     temp_data_of_lines.append(temp_data_of_linesStringStorage)
 
                     temp_data_of_linesStringStorage = ''
-                    # print(temp_data_of_lines, sep='\n')
             except Exception as e:
                 print(e)
                 input("Back to main menu")
@@ -189,7 +172,6 @@ class Creator(Commands):
                 ({temp_data_of_columns[:-2]})''')
                 con.commit()
                 print("Success!")
-                # VALUES ({temp_data_of_lines[0]})''')
             except Exception as e:
                 print("Error!", e)
                 cur.execute("rollback")
@@ -205,12 +187,13 @@ class Creator(Commands):
             main_menu()
 
 
-class Deletor(Commands):
+class Deletor:
+    ''' To delete tables
+    '''
     def __init__(self, table_name):
         self.table_name = table_name
 
-    def base_method(self, con, commands):
-        # cur = super().base_method(commands, con)
+    def base_method(self):
         print(
             f"Confirm deleting the {self.table_name}. Enter the database name.")
         decision = input("SQL: DROP TABLE ")
@@ -227,6 +210,8 @@ class Deletor(Commands):
 
 
 def create_and_execute_ready_query(user_query):
+    ''' Creating and executing ready query
+    '''
     cur = con.cursor()
     query, enter = '', 1
     text_of_query = [user_query]
@@ -274,6 +259,8 @@ def create_and_execute_ready_query(user_query):
 
 
 def type_finder(x):
+    ''' Type finder
+    '''
     try:
         if x == True or x == False:
             return 'bool'
@@ -292,6 +279,8 @@ def type_finder(x):
 
 
 def query_output_logic(rows, columns_from_cur):
+    ''' Query output logic
+    '''
     coulums = []  # array of columns names
     for i in range(len(columns_from_cur)):  # filling colums by cur.description
         coulums.append((columns_from_cur[i][0]).upper())
@@ -312,6 +301,8 @@ def query_output_logic(rows, columns_from_cur):
 
 
 def file_executor(file_name=''):
+    ''' Executing a query from a file
+    '''
     if file_name == '':
         file_name = input("File name or path to the file: ")
     if file_name.count("/") != 0:
@@ -328,22 +319,19 @@ def file_executor(file_name=''):
     query = ' '.join(text_of_query)
     try:
         cur.execute(f'''{query}''')
+        query_output_logic(cur.fetchall(), cur.description)
     except:
-        cur.execute("rollback")
-    query_output_logic(cur.fetchall(), cur.description)
+        cur.execute("rollback") # rollback if query is bad
+        print("Something went wrong while executing query.")
     decision = input("Do you want to run the query again? (Y/n) y - Default: ")
     if decision.lower() == 'n' or decision.lower() == 'no':
         main_menu()
-        # print("Closed successfully")
         exit(0)
     file_executor(file_name)
 
 
 def connec_db():
     try:
-        # TODO: сделать подключение к бд и создать зашифрованный файл с информацией, при успешном коннекте
-        #) TODO: сделать подключение к бд и заполение пользователем только пароля. все остальное хранится в атрибутах класса
-        # TODO: сделать возможность подключения по строке подключения
         # TODO: сделать обработку неполного ввода
         clear()
         print('''
@@ -384,7 +372,8 @@ def connec_db():
                 str_or_cred = input("# ")
                 if str_or_cred == '1':
                     with open('info.txt', 'w+') as f:
-                        f.write(input("Connection string: ") + '\n')
+                        f.write('2' + '\n')
+                        f.write('1' + '\n')
                 elif str_or_cred == '2':
                     with open('info.txt', 'w+') as f:
                         f.write('2' + '\n')
@@ -431,31 +420,50 @@ def connec_db():
         elif info[0] == '2':
             # str or cred
             if info[1] == '1':
-                # add connect by str
-                pass
+                con_str = input("Connection string: ")
+                con = pyodbc.connect(con_str)
             else:
                 # true con or not
-                if info[2] == 'n':
-                    # add Trusted_Connection=no
-                    pass
-                else:
+                if info[-2] == 'n':
+                    # Trusted_Connection = no
                     try:
                         con = pyodbc.connect(
                             "Driver={ODBC Driver 17 for SQL Server};"
-                            "Server=" + info[-2] + ";"
-                            "Database=" + info[-1] + ";"
+                            "Server=" + info[-3] + ";"
+                            "Database=" + info[-2] + ";"
+                            "User Id=" + info[-1] + ";"
+                            "Password=" + stdiomask.getpass() + ";"
+                        )
+                    except:
+                        print("Check your credentials and try again.")
+                else:
+                    # Trusted_Connection = yes
+                    try:
+                        con = pyodbc.connect(
+                            "Driver={ODBC Driver 17 for SQL Server};"
+                            "Server=" + info[-3] + ";"
+                            "Database=" + info[-2] + ";"
                             "Trusted_Connection=yes;"
                         )
                     except:
-                        print("Output error in development")
+                        print("Check your credentials and try again.")
+        else:
+            input("Something went wrong. Please try again.")
+            connec_db()
         print("Opened successfully")
         global cur
-        cur = con.cursor()
+        try:
+            cur = con.cursor()
+        except:
+            print("Check your credentials and try again.")
+            exit(0)
         clear()
         return con
     except psycopg2.OperationalError:
         print(f'Could not connect to database server. Check your credentials')
         exit(0)
+    except KeyboardInterrupt:
+        connec_db()
 
 
 connec_db()
@@ -464,9 +472,8 @@ connec_db()
 def main_menu():
     try:
         # clear()
-        # TODO: подумать над Status()
-        # TODO: Возможность просмотра таблиц
-        DataOfDatabases = Status()
+        # TODO: Id INT AUTO_INCREMENT
+
         print('''
          _                                _
         | \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._  1 Create a new table
@@ -495,21 +502,20 @@ def main_menu():
         commands = input("SQL >> ")
         if commands == '1':
             clear()
-            command = Creator(1)
-            command.base_method(commands, con)
+            command = Creator()
+            command.base_method()
         elif commands == '2':
             clear()
             command = Deletor(input("Enter the name of the table: "))
-            command.base_method(con, commands)
+            command.base_method()
         elif commands == '3':
             clear()
-            command = Selector(3)
-            command.base_method(commands, con)
+            command = Query()
+            command.base_method()
         elif commands == '4':
             exit(0)
         else:
             create_and_execute_ready_query(commands.strip("\n"))
-            # print (f"Unknown option '{unknown_command}'")
             main_menu()
     except Exception as e:
         print(f"Exception occurred while executing command. {e}")
