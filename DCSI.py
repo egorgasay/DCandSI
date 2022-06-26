@@ -12,6 +12,7 @@ import pyodbc
 class Query:
     ''' Query generator
     '''
+
     def base_method(self):
         ''' Query input logic
         '''
@@ -86,6 +87,7 @@ class Query:
 class Creator:
     ''' To create tables
     '''
+
     def base_method(self):
         table_name = input("Table name: ")
 
@@ -190,6 +192,7 @@ class Creator:
 class Deletor:
     ''' To delete tables
     '''
+
     def __init__(self, table_name):
         self.table_name = table_name
 
@@ -321,7 +324,7 @@ def file_executor(file_name=''):
         cur.execute(f'''{query}''')
         query_output_logic(cur.fetchall(), cur.description)
     except:
-        cur.execute("rollback") # rollback if query is bad
+        cur.execute("rollback")  # rollback if query is bad
         print("Something went wrong while executing query.")
     decision = input("Do you want to run the query again? (Y/n) y - Default: ")
     if decision.lower() == 'n' or decision.lower() == 'no':
