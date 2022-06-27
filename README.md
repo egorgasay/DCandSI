@@ -15,22 +15,22 @@
 🗝 You don't need to enter database information every time _(only password or connection string)_.
 
 ![alt text](https://i.imgur.com/ogvxSpa.png)
-🚀 Three options for executing an SQL query.
+🚀 **Three options** for executing an SQL query.
 
 ![alt text](https://i.imgur.com/ep1gmPu.png)
-✨ You can simply enter the query at the command prompt in the main menu or by typing 3 and 2!
+✨ You can simply **enter the query at the command prompt** in the main menu or by typing 3 and 2!
 
 ![alt text](https://i.imgur.com/j6NUSVI.png)
-💫 The result is output instantly, after pressing two ENTER or entering EOF on the last line.
+💫 The result is output **instantly**, after pressing two ENTER or entering EOF on the last line.
 
 ![alt text](https://i.imgur.com/4JalzSH.png)
-📚 You can create new tables without knowledge of SQL!
+📚 You can **create** new tables **without knowledge of SQL**!
 
-![alt text](https://i.imgur.com/cOKvErj.png)
-🖊 And also instantly fill them with new data.
+![alt text](https://i.imgur.com/cOKvErj.png)  
+🖊 And also **instantly** fill them with new data.
 
-![alt text](https://i.imgur.com/K28Gwr8.png)
-👨🏻‍💻 Write a request and don't think about the architecture, we took care of it!
+![alt text](https://i.imgur.com/K28Gwr8.png)  
+👨🏻‍💻 Write a request and **don't think about the architecture**, we took care of it!
 
 # Install
 ```
