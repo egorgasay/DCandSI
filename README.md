@@ -4,9 +4,9 @@
 
 ❔ _A script for creating, filling in and deleting database tables._
 
-📔 **Makes it easier** to work with queries.
-🤩 You can also use it even if you **don't know SQL syntax**!
-✅ Connection to **PostgreSQL** and **Microsoft SQL Server** databases is currently available.
+📔 **Makes it easier** to work with queries.  
+🤩 You can also use it even if you **don't know SQL syntax**!  
+✅ Connection to **PostgreSQL** and **Microsoft SQL Server** databases is currently available.  
 
 ![alt text](https://i.imgur.com/nXcdGrc.png)
 🗝 You don't need to enter database information every time _(only password or connection string)_.
