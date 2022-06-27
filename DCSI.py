@@ -153,6 +153,7 @@ class Creator:
                     cur.execute("rollback")
                 query_output_logic(cur.fetchall(), cur.description)
                 input("Back to main menu")
+                clear_screen()
                 main_menu()
             except Exception as e:
                 print(e)
