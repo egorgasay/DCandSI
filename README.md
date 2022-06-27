@@ -2,17 +2,17 @@
 # Database Controller &amp; Sql Interpreter
 ![alt text](https://i.imgur.com/aRevhdh.png)
 
-Script for creating, filling, and deleting databases.
+❔ _A script for creating, filling in and deleting database tables._
 
-This makes it easier to work with data.
-
-You can also use it even if you don't know SQL syntax.
+📔 **Makes it easier** to work with queries.
+🤩 You can also use it even if you **don't know SQL syntax**!
+✅ Connection to **PostgreSQL** and **Microsoft SQL Server** databases is currently available.
 
 ![alt text](https://i.imgur.com/nXcdGrc.png)
-You don't need to enter database information every time (only password).
+🗝 You don't need to enter database information every time _(only password or connection string)_.
 
 ![alt text](https://i.imgur.com/0W5Vrfk.png)
-View of the main menu.
+🌄 View of the main menu.
 # Install
 ```
 git clone https://github.com/egorgasay/DCandSI
