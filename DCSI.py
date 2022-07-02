@@ -102,7 +102,7 @@ class Creator:
                 ignore_list = []
                 for j in range(1, count_of_lines + 1):
                     for x in range(1, count_of_columns + 1):
-                        if 'serial primary key' not in temp_data_of_columnsArrayFull[x - 1].lower():
+                        if 'primary key' not in temp_data_of_columnsArrayFull[x - 1].lower():
                             # todo: сделать обработку неправильного ввода, например когда забыли ввести INT
                             item = input(
                                 f"line:{j} item:{temp_data_of_columnsArray[x-1]} > ")
