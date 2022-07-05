@@ -10,16 +10,16 @@ import pyodbc
 
 
 class Query:
-    ''' Query generator
-    '''
+    """ Query generator
+    """
 
     def base_method(self):
-        ''' Query input logic
-        '''
+        """ Query input logic
+        """
 
         def decision_func(cur):
-            ''' Forces you to make a choice between two options
-            '''
+            """ Forces you to make a choice between two options
+            """
             print('''
              _                                _
             | \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._   1 Type query manualy
@@ -66,8 +66,8 @@ class Query:
                     clear()
                     decision_func(cur)
             elif decision == str(1):
-                '''complex query
-                '''
+                """ Сomplex query
+                """
                 print("SQL ")
                 user_query = input("SQL >> ").strip("\n")
                 create_and_execute_ready_query(user_query)
@@ -85,8 +85,8 @@ class Query:
 
 
 class Creator:
-    ''' To create tables
-    '''
+    """ To create tables
+    """
 
     def base_method(self):
         table_name = input("Table name: ")
@@ -200,8 +200,7 @@ class Creator:
             try:
                 # FOR MYSQL in the future
                 # if 'auto_increment' not in temp_data_of_columns.lower():
-                cur.execute(f'''CREATE TABLE {table_name}
-                ({temp_data_of_columns[:-2]})''')
+                cur.execute(f'''CREATE TABLE {table_name} ({temp_data_of_columns[:-2]})''')
                 # else:
                 #    cur.execute(f'''CREATE TABLE {table_name}
                 #    ({temp_data_of_columns[:-2]+"PRIMARY KEY ({})"})''')
@@ -232,8 +231,8 @@ class Creator:
 
 
 class Deletor:
-    ''' To delete tables
-    '''
+    """ To delete tables
+    """
 
     def __init__(self, table_name):
         self.table_name = table_name
@@ -255,8 +254,8 @@ class Deletor:
 
 
 def create_and_execute_ready_query(user_query):
-    ''' Creating and executing ready query
-    '''
+    """ Creating and executing ready query
+    """
     cur = con.cursor()
     query, enter = '', 1
     text_of_query = [user_query]
@@ -316,8 +315,8 @@ def create_and_execute_ready_query(user_query):
 
 
 def type_finder(x):
-    ''' Type finder
-    '''
+    """ Type finder
+    """
     try:
         if x == True or x == False:
             return 'bool'
@@ -336,8 +335,8 @@ def type_finder(x):
 
 
 def query_output_logic(rows, columns_from_cur):
-    ''' Query output logic
-    '''
+    """ Query output logic
+    """
     coulums = []  # array of columns names
     for i in range(len(columns_from_cur)):  # filling colums by cur.description
         coulums.append((columns_from_cur[i][0]).upper())
@@ -358,8 +357,8 @@ def query_output_logic(rows, columns_from_cur):
 
 
 def file_executor(file_name=''):
-    ''' Executing a query from a file
-    '''
+    """ Executing a query from a file
+    """
     if file_name == '':
         file_name = input("File name or path to the file: ")
     if file_name.count("/") != 0:
