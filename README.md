@@ -32,14 +32,21 @@
 ![alt text](https://i.imgur.com/K28Gwr8.png)  
 👨🏻‍💻 Write a request and **don't think about the architecture**, we took care of it!
 
-# Install
+# Install Windows
 ```
 git clone https://github.com/egorgasay/DCandSI
 py -m pip install -r requirements.txt
 ```
+# Install Linux
+```
+git clone https://github.com/egorgasay/DCandSI
+bash install_linux.sh
+```
+
 # Usage
 ```
-py DCSI.py 
+py DCSI.py (Windows)
+python3.10 DCSI.py (Linux)
 ```
 After launching, you can type text of query or choose one of 1-4 options.
 
