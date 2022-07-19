@@ -1,4 +1,3 @@
-import random as rnd
 import os
 import platform
 from clear_screen import clear
@@ -47,21 +46,25 @@ def main_menu(*args):
             clear()
             command = Creator()
             command.base_method(con)
+            clear()
             main_menu()
         elif commands == '2':
             clear()
             command = Deletor(input("Enter the name of the table: "))
             command.base_method(con)
+            clear()
             main_menu()
         elif commands == '3':
             clear()
             command = Query()
             command.base_method(con)
+            clear()
             main_menu()
         elif commands == '4':
             exit(0)
         else:
             create_and_execute_ready_query(commands.strip("\n"), con)
+            clear()
             main_menu()
     except Exception as e:
         print(f"Exception occurred while executing command. {e}")

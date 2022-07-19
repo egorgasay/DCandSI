@@ -1,5 +1,7 @@
 from prettytable import PrettyTable
 from clear_screen import clear
+import random as rnd
+
 
 def query_output_logic(rows, columns_from_cur):
     """ 
@@ -21,6 +23,7 @@ def query_output_logic(rows, columns_from_cur):
         dt = dt[column:]
     clear()
     print(rtable)
+
 
 def file_executor(cur, file_name=''):
     """ 
@@ -51,6 +54,7 @@ def file_executor(cur, file_name=''):
         return 0
         exit(0)
     file_executor(cur, file_name)
+
 
 def create_and_execute_ready_query(user_query, con):
     """ 
@@ -113,4 +117,4 @@ def create_and_execute_ready_query(user_query, con):
             for line in range(len(text_of_query)):
                 f.write(text_of_query[line] + '\n')
         input(f"Saved in {file_name}")
-
+        clear()

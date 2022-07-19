@@ -11,7 +11,7 @@
 ![alt text](https://i.imgur.com/0W5Vrfk.png)
 🌄 View of the main menu.
 
-![alt text](https://i.imgur.com/nXcdGrc.png)
+![alt text](https://media2.giphy.com/media/S1v37dKB5n3stBfjC7/giphy.gif?cid=790b76111cdf1c05aec129cd48f83d719e4c9f4e51411a96&rid=giphy.gif&ct=g)
 🗝 You don't need to enter database information every time _(only password or connection string)_.
 
 ![alt text](https://i.imgur.com/ogvxSpa.png)
