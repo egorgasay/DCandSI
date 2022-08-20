@@ -1,3 +1,8 @@
+from colorama import init, Fore
+from colorama import Back
+from colorama import Style
+
+
 class Deletor:
     """ 
     To delete tables
@@ -13,10 +18,14 @@ class Deletor:
         decision = input("SQL: DROP TABLE ")
         if decision == self.table_name:
             try:
-                cur.execute(f'''DROP TABLE IF EXISTS {self.table_name}''')
-            except:
+                cur.execute(f'''DROP TABLE {self.table_name}''')
+            except Exception as e:
                 cur.execute("rollback")
+                print(
+                    Fore.RED + f"Deleting table {self.table_name} wasn't completed successfully!")
+                input(Fore.RED + f"Error: {e}" + Style.RESET_ALL)
+                return 0
             con.commit()
-            print(f"DROP TABLE {self.table_name} was completed successfully!")
+            input(f"DROP TABLE {self.table_name} was completed successfully!")
         else:
-            input("The names of the tables do not match!")
+            input(Fore.RED + "The names of the tables do not match!" + Style.RESET_ALL)

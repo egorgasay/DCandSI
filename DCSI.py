@@ -6,6 +6,9 @@ from create import Creator
 from delete import Deletor
 from connect import ConnectDB
 from functions import create_and_execute_ready_query
+from colorama import init, Fore
+from colorama import Back
+from colorama import Style
 
 
 def main_menu(*args):
@@ -67,7 +70,8 @@ def main_menu(*args):
             clear()
             main_menu()
     except Exception as e:
-        print(f"Exception occurred while executing command. {e}")
+        input(Fore.RED + f"Exception occurred while executing command. {e}"
+              + Style.RESET_ALL)
         input('Back to main menu')
         main_menu()
     except KeyboardInterrupt:

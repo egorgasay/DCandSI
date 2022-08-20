@@ -1,6 +1,9 @@
 from prettytable import PrettyTable
 from clear_screen import clear
 import random as rnd
+from colorama import init, Fore
+from colorama import Back
+from colorama import Style
 
 
 def query_output_logic(rows, columns_from_cur):
@@ -40,7 +43,8 @@ def file_executor(cur, file_name=''):
             for line in f:
                 text_of_query.append(line.strip('\n'))
     except Exception as e:
-        print(f"Exception occurred while collecting text of query. {e}")
+        input(
+            Fore.RED + f"Exception occurred while collecting text of query. {e}" + Style.RESET_ALL)
         file_executor(cur)
     query = ' '.join(text_of_query)
     try:
@@ -48,11 +52,12 @@ def file_executor(cur, file_name=''):
         query_output_logic(cur.fetchall(), cur.description)
     except Exception as e:
         cur.execute("rollback")  # rollback if query is bad
-        print(f"Something went wrong while executing query. {e}")
+        input(Fore.RED + f"Something went wrong while executing query.. \n{e}" +
+              Style.RESET_ALL)
+
     decision = input("Do you want to run the query again? (Y/n) y - Default: ")
     if decision.lower() == 'n' or decision.lower() == 'no':
         return 0
-        exit(0)
     file_executor(cur, file_name)
 
 
@@ -87,13 +92,13 @@ def create_and_execute_ready_query(user_query, con):
         con.commit()
         return 0
         # print("Closed successfully")
-        exit(0)
+        # exit(0)
     #
     try:
         cur.execute(f'''{query}''')
     except Exception as e:
         cur.execute("rollback")
-        print(e)
+        input(Fore.RED + f"{e}" + Style.RESET_ALL)
         input("Back to main menu")
         clear()
         return 0
@@ -101,12 +106,12 @@ def create_and_execute_ready_query(user_query, con):
     try:
         query_output_logic(cur.fetchall(), cur.description)
     except Exception as e:
-        if 'DROP TABLE' in query.upper() and 'no results to fetch' in str(e):
-            print("Deleted successfully")
+        if 'no results to fetch' in str(e):
+            print("No results to fetch! Check your query if you were expecting output.")
         else:
-            print(f"Error in query text!{e}!")
+            input(Fore.RED + f"Error in query text!\n{e}!" + Style.RESET_ALL)
             input("Back to main menu")
-            main_menu()
+            return 0
     save_decision = input("Save the query text? (Y/n): ")
     if save_decision.lower() == 'n' or save_decision.lower() == 'no':
         pass

@@ -1,5 +1,8 @@
 from clear_screen import clear
 from functions import *
+from colorama import init, Fore
+from colorama import Back
+from colorama import Style
 
 
 class Query:
@@ -54,8 +57,10 @@ class Query:
                 try:
                     cur.execute(
                         f'''SELECT {user_columns} FROM {table_name} {optional}''')
-                except:
+                except Exception as e:
                     cur.execute("rollback")
+                    input(Fore.RED + f"{e}" + Style.RESET_ALL)
+                    return 0
                 query_output_logic(cur.fetchall(), cur.description)
                 back = input("Go back to the main menu? (n - default)")
                 if 'y' in back.lower():
@@ -74,7 +79,6 @@ class Query:
             elif decision == str(3):
                 file_executor(cur)
                 return 0
-                exit(0)
             else:
                 # TODO: сделать try except error рекурсии
                 return 0

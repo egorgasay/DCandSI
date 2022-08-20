@@ -1,5 +1,8 @@
 from clear_screen import clear
 from functions import *
+from colorama import init, Fore
+from colorama import Back
+from colorama import Style
 
 
 class Creator:
@@ -82,7 +85,7 @@ class Creator:
 
                     temp_data_of_linesStringStorage = ''
             except Exception as e:
-                print(e)
+                input(Fore.RED + f"{e}" + Style.RESET_ALL)
                 input("Back to main menu")
                 return 0
             try:
@@ -103,8 +106,8 @@ class Creator:
                         VALUES ({temp_data_of_linesStringStorage2[:-2]})''')
                     except Exception as e:
                         cur.execute("rollback")
-                        print(e)
-                        input('Something went wrong while inserting lines..')
+                        input(
+                            Fore.RED + 'Something went wrong while inserting lines..' + f"{e}" + Style.RESET_ALL)
                         clear()
                         return 0
                 con.commit()
@@ -118,7 +121,7 @@ class Creator:
                 clear()
                 return 0
             except Exception as e:
-                print(e)
+                input(Fore.RED + f"{e}" + Style.RESET_ALL)
                 input("Back to main menu")
                 return 0
 
@@ -152,8 +155,7 @@ class Creator:
                 clear()
             except Exception as e:
                 cur.execute("rollback")
-                print(e)
-                input('Something went wrong while creating table..')
+                input(Fore.RED + f"{e}" + Style.RESET_ALL)
                 clear()
                 return 0
 
