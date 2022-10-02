@@ -95,21 +95,22 @@ def create_and_execute_ready_query(user_query, con):
         # exit(0)
     #
     try:
-        cur.execute(f'''{query}''')
+        print(query)
+        cur.execute(query)
     except Exception as e:
         cur.execute("rollback")
         input(Fore.RED + f"{e}" + Style.RESET_ALL)
         input("Back to main menu")
         clear()
         return 0
-    con.commit()
+
     try:
         query_output_logic(cur.fetchall(), cur.description)
     except Exception as e:
         if 'no results to fetch' in str(e):
             print("No results to fetch! Check your query if you were expecting output.")
         else:
-            input(Fore.RED + f"Error in query text!\n{e}!" + Style.RESET_ALL)
+            input(Fore.RED + f"{e}!" + Style.RESET_ALL)
             input("Back to main menu")
             return 0
     save_decision = input("Save the query text? (Y/n): ")
@@ -123,3 +124,4 @@ def create_and_execute_ready_query(user_query, con):
                 f.write(text_of_query[line] + '\n')
         input(f"Saved in {file_name}")
         clear()
+    con.commit()

@@ -28,21 +28,33 @@ def main_menu(*args):
         (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |
                     |                        |                             Or type SQL query!
         ''')
-        try:
-            if info[0] == '1':
-                cur.execute(
-                    """SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;""")
-            else:
-                cur.execute(
-                    """SELECT name FROM sys.tables""")
-            tables_names = [*(str(*i) for i in cur.fetchall())]
+        if info[0] == '3':
+            # for row in list_tables: row.table_name
+            tables_names = [*(str(i.table_name) for i in cur.tables())]
             print(
                 f"Available tables: ", ', '.join(tables_names), ".", sep="")
+        else:
 
-        except Exception as e:
-            print(e)
-            print("You don't have tables in your schema! \nLet's create a new table!")
-            cur.execute("rollback")
+            try:
+                if info[0] == '1':
+                    cur.execute(
+                        """SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;""")
+                elif info[0] == '2':
+                    cur.execute(
+                        """SELECT name FROM sys.tables""")
+                tables_names = [*(str(*i) for i in cur.fetchall())]
+                print(
+                    f"Available tables: ", ', '.join(tables_names), ".", sep="")
+
+            except Exception as e:
+
+                print(e)
+                print(
+                    "You don't have tables in your schema! \nLet's create a new table!")
+                try:
+                    cur.execute("rollback")
+                except:
+                    print('')
         print("Write EOF in the end of query or pres ENTER twice.")
         commands = input("SQL >> ")
         if commands == '1':

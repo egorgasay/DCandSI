@@ -40,16 +40,17 @@ class ConnectDB:
                     return info
 
             def empty():
-                global postgres_or_mssm
-                postgres_or_mssm = input('1 PostgreSQL\n2 MS SQL Server\n# ')
-                if postgres_or_mssm == '1':
+                global bd_choice
+                bd_choice = input(
+                    '1 PostgreSQL\n2 MS SQL Server\n3 Access\n# ')
+                if bd_choice == '1':
                     with open('info.txt', 'w+') as f:
                         f.write('1' + '\n')
                         f.write(input("Database name: ") + '\n')
                         f.write(input("Host name: ") + '\n')
                         f.write(input("Port: ") + '\n')
                         f.write(input("User name: ") + '\n')
-                elif postgres_or_mssm == '2':
+                elif bd_choice == '2':
                     print("1 Connection string for MS SQL Server")
                     print("2 Connection credentials for MS SQL Server")
                     global str_or_cred
@@ -74,10 +75,15 @@ class ConnectDB:
                                 f.write('y' + '\n')
                     else:
                         input('Please, enter 1 or 2')
-                        connec_db()
+                        ConnectDB.connec_db(self)
+                elif bd_choice == '3':
+                    with open('info.txt', 'w+') as f:
+                        f.write('3' + '\n')
+                        f.write(
+                            input("DB location\nExample: C:\\Test.accdb\n# ") + '\n')
                 else:
-                    input('Please, enter 1 or 2')
-                    connec_db()
+                    input('Please, enter 1, 2 or 3')
+                    ConnectDB.connec_db(self)
 
                 return read_from_non_empty_file()
             if empty_or_not == 0:
@@ -130,9 +136,22 @@ class ConnectDB:
                             )
                         except:
                             print("Check your credentials and try again.")
+            elif info[0] == '3':
+                print(info[-1])
+                con_string = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};' \
+                    rf'DBQ={info[-1]};'
+                try:
+                    self.con = pyodbc.connect(con_string)
+                except:
+                    print("Check your credentials and try again.")
+                # conn = pyodbc.connect('DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
+                #       "SERVER=" + info[-2] + ";"
+                #       "DATABASE=" + info[-3] + ";"
+                #       "UID=" + info[-1] + ";"
+                #       "PWD="+stdiomask.getpass() + ";")
             else:
                 input("Something went wrong. Please try again.")
-                connec_db()
+                exit(0)
             print("Opened successfully")
             global cur
             try:
@@ -146,4 +165,5 @@ class ConnectDB:
             print(f'Could not connect to database server. Check your credentials')
             exit(0)
         except KeyboardInterrupt:
-            connec_db()
+            exit(0)
+            # ConnectDB.connec_db(self)
