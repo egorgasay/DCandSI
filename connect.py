@@ -4,6 +4,9 @@ import pyodbc
 import psycopg2
 from clear_screen import clear
 import os
+from colorama import init, Fore
+from colorama import Back
+from colorama import Style
 
 
 class ConnectDB:
@@ -134,30 +137,38 @@ class ConnectDB:
                                 "Database=" + info[-2] + ";"
                                 "Trusted_Connection=yes;"
                             )
-                        except:
+                        except Exception as e:
                             print("Check your credentials and try again.")
             elif info[0] == '3':
-                print(info[-1])
-                con_string = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};' \
-                    rf'DBQ={info[-1]};'
-                try:
-                    self.con = pyodbc.connect(con_string)
-                except:
-                    print("Check your credentials and try again.")
+                print("Connecting to " + info[-1])
+                msa_drivers = [
+                    x for x in pyodbc.drivers() if 'ACCESS' in x.upper()]
+                if msa_drivers:
+                    con_string = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};' \
+                        rf'DBQ={info[-1]};'
+                    try:
+                        self.con = pyodbc.connect(con_string)
+                    except Exception as e:
+                        input(Fore.RED + f"{e}" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + "Please, install Access Driver!" +
+                          Style.RESET_ALL)
+                    exit(0)
                 # conn = pyodbc.connect('DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
                 #       "SERVER=" + info[-2] + ";"
                 #       "DATABASE=" + info[-3] + ";"
                 #       "UID=" + info[-1] + ";"
                 #       "PWD="+stdiomask.getpass() + ";")
             else:
-                input("Something went wrong. Please try again.")
+                input(
+                    Fore.RED + f"Something went wrong. Please try again." + Style.RESET_ALL)
                 exit(0)
             print("Opened successfully")
             global cur
             try:
                 cur = self.con.cursor()
-            except:
-                print("Check your credentials and try again.")
+            except Exception as e:
+                input(Fore.RED + f"{e}" + Style.RESET_ALL)
                 exit(0)
             clear()
             return self.con, info, cur
@@ -165,5 +176,8 @@ class ConnectDB:
             print(f'Could not connect to database server. Check your credentials')
             exit(0)
         except KeyboardInterrupt:
+            exit(0)
+        except Exception as e:
+            input(Fore.RED + f"{e}" + Style.RESET_ALL)
             exit(0)
             # ConnectDB.connec_db(self)
