@@ -4,6 +4,7 @@ import random as rnd
 from colorama import init, Fore
 from colorama import Back
 from colorama import Style
+import os
 
 
 def query_output_logic(rows, columns_from_cur):
@@ -88,11 +89,11 @@ def create_and_execute_ready_query(user_query, con):
         os.system(f"{file_name}")
         print(f"Saved in {file_name}")
         wait_until_done = input("# Waiting for your changes...(ENTER) ")
-        file_executor(file_name)
+        file_executor(cur, file_name)
         con.commit()
         return 0
-        # print("Closed successfully")
-        # exit(0)
+    # print("Closed successfully")
+    # exit(0)
     #
     try:
         print(query)
@@ -107,7 +108,7 @@ def create_and_execute_ready_query(user_query, con):
     try:
         query_output_logic(cur.fetchall(), cur.description)
     except Exception as e:
-        if 'no results to fetch' in str(e):
+        if 'o results' in str(e):
             print("No results to fetch! Check your query if you were expecting output.")
         else:
             input(Fore.RED + f"{e}!" + Style.RESET_ALL)

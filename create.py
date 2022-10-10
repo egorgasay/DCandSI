@@ -162,7 +162,7 @@ class Creator:
             return temp_data_of_columns, temp_data_of_columnsArray, count_of_columns
 
         decision = input(
-            f"Do you want to add some data in {table_name}? (Y/n) n - default :")
+            f"Do you want to add some data in {table_name}? (Y/n) n - default : ")
         if decision.lower() == 'y':
             create_and_fill(table_name)
         else:
