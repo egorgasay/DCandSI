@@ -7,52 +7,114 @@ import os
 from colorama import init, Fore
 from colorama import Back
 from colorama import Style
+from werkzeug.exceptions import abort
+import hashlib
+import os
+import sqlite3
 
 
 class ConnectDB:
     """ 
     Connect to a database
     """
+    main_username = ''
 
     def __init__(self):
         self.con = ''
 
-    def connec_db(self):
+    def compare_passwords(self, username, password, cur):
+        #self.main_username = username
+        passwd_from_db = ''
+        try:
+            datapswd = cur.execute(
+                f"""SELECT password FROM Users WHERE username = '{username}'""")
+            passwd_from_db = tuple(datapswd.fetchone())
+        except:
+            return 'Wrong username'
+        # print([passwd_from_db])
+        return 'OK' if password == passwd_from_db[0] else 'Wrong password'
+        # if encrypt_password(password) == passwd_from_bd:
+        #     return 'OK'
+        # return 'Wrong password'
+
+    def encrypt_password(self, password):
+        salt = os.urandom(32)
+        key = password
+        new_key = hashlib.pbkdf2_hmac('sha256',
+                                      password.encode('utf-8'),
+                                      salt,
+                                      100200)
+        return new_key
+
+    def record_user_db(self, conn, hostname, bdname, username, password, port, TYPE):
+        cur = conn.cursor()
+        if TYPE == 'PSQL':
+            try:
+                cur.execute(
+                    f"""INSERT INTO Data VALUES ('{self.main_username}', '{hostname}', '{bdname}', '{username}', '{password}', {port}, '{TYPE}')""")
+                conn.commit()
+            except Exception as e:
+                print(str(e))
+                cur.execute('ROLLBACK')
+                conn.close()
+                return 'Err'
+            return 'OK'
+
+    def create_user(self, username, password, conn):
+        self.conn = conn
+        cur = self.conn.cursor()
+        try:
+            #new_passwd = str(self.encrypt_password(password)).replace('\\', '1')[2:-2]
+            # print(new_passwd)
+            cur.execute(
+                f"""INSERT INTO Users (username, password) VALUES ('{username}', '{password}');""")
+            conn.commit()
+        except Exception as e:
+            if 'UNIQUE constraint failed' in str(e):
+                return f'The username is already taken'
+            cur.execute('ROLLBACK')
+            conn.close()
+            return f'Error {e}'
+        return 'OK'
+
+    def connec_db(self, conn):
         try:
             # TODO: сделать обработку неполного ввода
-            clear()
-            print('''
-             _                                _
-            | \  _. _|_  _. |_   _.  _  _    /   _  ._  _|_ ._  _  | |  _  ._
-            |_/ (_|  |_ (_| |_) (_| _> (/_   \_ (_) | |  |_ |  (_) | | (/_ |
-                   __         ___
-            ()    (_   _. |    |  ._  _|_  _  ._ ._  ._  _  _|_  _  ._
-            (_X   __) (_| |   _|_ | |  |_ (/_ |  |_) |  (/_  |_ (/_ |
-                        |                        |
-            ''')
+            # clear()
+            try:
+                cur = conn.cursor()
+                print(self.main_username)
+                data_from_query = cur.execute(
+                    f"""SELECT * FROM Data WHERE username = '{self.main_username}'""")
+                data_from_query = tuple(data_from_query.fetchone())
+                # print(data_from_query)
+                #empty_or_not = os.stat('info.txt')
+            except Exception as e:
+                print('Тут ничего нет')
+                print(str(e))
+                if 'NoneType' in str(e):
+                    return 'Nothing'
+                # abort(403)
+            empty_or_not = 2 if len(data_from_query) > 0 else 0
 
-            empty_or_not = os.stat('info.txt')
-            global info
-            info = []
-            empty_or_not = empty_or_not.st_size
-
-            def read_from_non_empty_file():
+            # def add_record():
+            #     cur
+            def read_from_non_empty_file(info=[]):
                 with open('info.txt', 'r') as f:
                     for line in f:
                         info.append(line[:-1])
                     return info
 
-            def empty():
-                global bd_choice
-                bd_choice = input(
-                    '1 PostgreSQL\n2 MS SQL Server\n3 Access\n# ')
+            def empty(bd_choice, info):
+                #global bd_choice
+                # bd_choice = input('1 PostgreSQL\n2 MS SQL Server\n3 Access\n# ')
                 if bd_choice == '1':
                     with open('info.txt', 'w+') as f:
                         f.write('1' + '\n')
-                        f.write(input("Database name: ") + '\n')
-                        f.write(input("Host name: ") + '\n')
-                        f.write(input("Port: ") + '\n')
-                        f.write(input("User name: ") + '\n')
+                        f.write(info[0] + '\n')
+                        f.write(info[1] + '\n')
+                        f.write(info[2] + '\n')
+                        f.write(info[3] + '\n')
                 elif bd_choice == '2':
                     print("1 Connection string for MS SQL Server")
                     print("2 Connection credentials for MS SQL Server")
@@ -77,37 +139,41 @@ class ConnectDB:
                             else:
                                 f.write('y' + '\n')
                     else:
-                        input('Please, enter 1 or 2')
-                        ConnectDB.connec_db(self)
+                        return 'Error'
                 elif bd_choice == '3':
                     with open('info.txt', 'w+') as f:
                         f.write('3' + '\n')
-                        f.write(
-                            input("DB location\nExample: C:\\Test.accdb\n# ") + '\n')
+                        f.write(info[0] + '\n')
                 else:
-                    input('Please, enter 1, 2 or 3')
-                    ConnectDB.connec_db(self)
+                    return 'Error'
 
                 return read_from_non_empty_file()
             if empty_or_not == 0:
-                empty()
+                return 'No data in table'
+                #empty(bd_choice, info)
             else:
-                decision = input(
-                    "Restore previous session? (Y/n): Y - default : ")
-                if "n" in decision.lower():
-                    info = empty()
-                else:
-                    info = read_from_non_empty_file()
+                info = data_from_query
+                #info = read_from_non_empty_file()
+                # decision = input(
+                #     "Restore previous session? (Y/n): Y - default : ")
+                # if "n" in decision.lower():
+                #     info = empty(bd_choice, info)
+                # else:
+                #     info = read_from_non_empty_file()
 
             # print(info)
-            if info[0] == '1':
-                self.con = psycopg2.connect(
-                    database=info[-4],
-                    user=info[-1],
-                    password=stdiomask.getpass(),
-                    host=info[-3],
-                    port=info[-2]
-                )
+            if info[-1] == 'PSQL':
+                try:
+                    self.con = psycopg2.connect(
+                        database=info[-5],
+                        user=info[-4],
+                        password=info[-3],
+                        host=info[-6],
+                        port=info[-2]
+                    )
+                except Exception as e:
+                    print(str(e))
+                    return 'Wrong credentials'
             # postgres or ms sql
             elif info[0] == '2':
                 # str or cred
@@ -160,24 +226,24 @@ class ConnectDB:
                 #       "UID=" + info[-1] + ";"
                 #       "PWD="+stdiomask.getpass() + ";")
             else:
-                input(
+                print(
                     Fore.RED + f"Something went wrong. Please try again." + Style.RESET_ALL)
                 exit(0)
             print("Opened successfully")
-            global cur
             try:
+                #global cur
                 cur = self.con.cursor()
             except Exception as e:
-                input(Fore.RED + f"{e}" + Style.RESET_ALL)
+                print(Fore.RED + f"{e}" + Style.RESET_ALL)
                 exit(0)
-            clear()
+            # clear()
             return self.con, info, cur
         except psycopg2.OperationalError:
-            print(f'Could not connect to database server. Check your credentials')
+            print(f'Could not connect to database server. Please, check your credentials')
             exit(0)
         except KeyboardInterrupt:
             exit(0)
-        except Exception as e:
-            input(Fore.RED + f"{e}" + Style.RESET_ALL)
-            exit(0)
+        # except Exception as e:
+        #     print(Fore.RED + f"{e}" + Style.RESET_ALL)
+        #     exit(0)
             # ConnectDB.connec_db(self)

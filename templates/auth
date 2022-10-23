@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <title>Auth</title>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+        <script src='main.js'></script>
+    </head>
+    <body>
+        <form method="post">
+            {{ form.csrf_token() }}
+            {% for field in form if field.name != 'csrf_token' %}
+                {% if field.name != 'submit' %}
+                    <h4 style="font-size: 30px;">{{ field.label }}</h4>
+                    <p style="width: 50%;">
+                        {{ field }} 
+                        {% for error in field.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+            {% endfor %}
+            {{ form.submit }}
+        </form>
+    </body>
+</html>

@@ -6,6 +6,12 @@ from colorama import Back
 from colorama import Style
 import os
 
+def get_col_name(col_act_name):
+    if not col_act_name[-1].isdigit():
+        col_act_name += '-1'
+    elif col_act_name[-1].isdigit():
+        col_act_name += str(int(col_act_name[-1]) + 1)
+    return col_act_name
 
 def query_output_logic(rows, columns_from_cur):
     """ 
@@ -13,7 +19,10 @@ def query_output_logic(rows, columns_from_cur):
     """
     coulums = []  # array of columns names
     for i in range(len(columns_from_cur)):  # filling colums by cur.description
-        coulums.append((columns_from_cur[i][0]).upper())
+        col_act_name = (columns_from_cur[i][0]).upper()
+        if col_act_name in coulums:
+            col_act_name = get_col_name(col_act_name)
+        coulums.append((col_act_name))
         dt = []  # empty array of elements
     for row in rows:  # filling array of elements
         for element in row:
@@ -25,8 +34,8 @@ def query_output_logic(rows, columns_from_cur):
         column = len(coulums)
         rtable.add_row(dt[:column])
         dt = dt[column:]
-    clear()
-    print(rtable)
+    #clear()
+    return rtable
 
 
 def file_executor(cur, file_name=''):
@@ -126,3 +135,34 @@ def create_and_execute_ready_query(user_query, con):
         input(f"Saved in {file_name}")
         clear()
     con.commit()
+
+def tables_list(cur, baseid):
+    available_tables = ''
+    if baseid == '3':
+        # for row in list_tables: row.table_name
+        tables_names = [*(str(i.table_name) for i in cur.tables())]
+        available_tables = f"{', '.join(tables_names)}."
+    else:
+        try:
+            if baseid == 'PSQL':
+                cur.execute( """SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;""")
+                data_from_query = cur.fetchall()
+                if len(data_from_query) == 1:
+                    available_tables = data_from_query[0][0]
+                else:
+                    tables_names = [*(str(*i) for i in data_from_query)]
+                    available_tables = f"{', '.join(tables_names)}."
+            elif baseid == '2':
+                cur.execute("""SELECT name FROM sys.tables""")
+                data_from_query = cur.fetchall()
+                tables_names = [*(str(*i) for i in data_from_query)]
+                available_tables = f"{', '.join(tables_names)}."
+
+        except Exception as e:
+            print(e)
+            available_tables = "You don't have tables in your schema! \nLet's create a new table!"
+            try:
+                cur.execute("rollback")
+            except:
+                print('')
+        return available_tables
