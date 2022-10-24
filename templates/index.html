@@ -13,6 +13,7 @@
     <a href='/disconnect'><button>Отключиться</button></a>
     <h4><label for="text" style="font-size: 30px;">Доступные таблицы</label></h4>
     {{ available_tables }}
+{#    <input type="submit" name="submit" value="Выполнить">#}
     <form action="" method="post">
         {{ form.csrf_token() }}
         {% for field in form if field.name != 'csrf_token' %}

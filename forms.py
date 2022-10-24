@@ -16,6 +16,7 @@ class CommonForm(FlaskForm):
                          }
                          )
 
+
 class PostgresForm(FlaskForm):
     list_db = [('yes', 'Да'), ('No', 'Нет')]
     bdname = TextAreaField(label='Имя базы данных',

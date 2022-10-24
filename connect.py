@@ -17,13 +17,13 @@ class ConnectDB:
     """ 
     Connect to a database
     """
-    main_username = ''
 
-    def __init__(self):
-        self.con = ''
+    def __init__(self, con, main_username):
+        self.con = con
+        self.cur = con.cursor()
+        self.main_username = main_username
 
     def compare_passwords(self, username, password, cur):
-        #self.main_username = username
         passwd_from_db = ''
         try:
             datapswd = cur.execute(
@@ -31,11 +31,7 @@ class ConnectDB:
             passwd_from_db = tuple(datapswd.fetchone())
         except:
             return 'Wrong username'
-        # print([passwd_from_db])
         return 'OK' if password == passwd_from_db[0] else 'Wrong password'
-        # if encrypt_password(password) == passwd_from_bd:
-        #     return 'OK'
-        # return 'Wrong password'
 
     def encrypt_password(self, password):
         salt = os.urandom(32)
@@ -153,13 +149,6 @@ class ConnectDB:
                 #empty(bd_choice, info)
             else:
                 info = data_from_query
-                #info = read_from_non_empty_file()
-                # decision = input(
-                #     "Restore previous session? (Y/n): Y - default : ")
-                # if "n" in decision.lower():
-                #     info = empty(bd_choice, info)
-                # else:
-                #     info = read_from_non_empty_file()
 
             # print(info)
             if info[-1] == 'PSQL':
@@ -220,30 +209,19 @@ class ConnectDB:
                     print(Fore.RED + "Please, install Access Driver!" +
                           Style.RESET_ALL)
                     exit(0)
-                # conn = pyodbc.connect('DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
-                #       "SERVER=" + info[-2] + ";"
-                #       "DATABASE=" + info[-3] + ";"
-                #       "UID=" + info[-1] + ";"
-                #       "PWD="+stdiomask.getpass() + ";")
             else:
                 print(
                     Fore.RED + f"Something went wrong. Please try again." + Style.RESET_ALL)
                 exit(0)
             print("Opened successfully")
             try:
-                #global cur
                 cur = self.con.cursor()
             except Exception as e:
                 print(Fore.RED + f"{e}" + Style.RESET_ALL)
                 exit(0)
-            # clear()
             return self.con, info, cur
         except psycopg2.OperationalError:
             print(f'Could not connect to database server. Please, check your credentials')
             exit(0)
         except KeyboardInterrupt:
             exit(0)
-        # except Exception as e:
-        #     print(Fore.RED + f"{e}" + Style.RESET_ALL)
-        #     exit(0)
-            # ConnectDB.connec_db(self)
