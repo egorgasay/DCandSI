@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField, HiddenField, TextAreaField, PasswordField, IntegerField
+from wtforms import SelectField, SubmitField, HiddenField, TextAreaField, PasswordField, IntegerField, StringField
 
 
 class CommonForm(FlaskForm):
     text = TextAreaField(label='Текст запроса',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 180px; width: 60%; ',
+                             'style': 'height: 160px; width: 30%; ',
                          }
                          )
     submit = SubmitField("Выполнить",
@@ -19,34 +19,34 @@ class CommonForm(FlaskForm):
 
 class PostgresForm(FlaskForm):
     list_db = [('yes', 'Да'), ('No', 'Нет')]
-    bdname = TextAreaField(label='Имя базы данных',
+    bdname = StringField(label='Имя базы данных',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: 30px; width: auto; ',
                          }
                          )
-    hostname = TextAreaField(label='Имя хоста',
+    hostname = StringField(label='Имя хоста',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: 30px; width: auto; ',
                          }
                          )
     port = IntegerField(label='Порт',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 15%; ',
+                             'style': 'height: 30px; width: auto; ',
                          }
                          )
-    username = TextAreaField(label='Имя пользователя',
+    username = StringField(label='Имя пользователя',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: 30px; width: auto; ',
                          }
                          )
     password = PasswordField(label='Пароль',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: 30px; width: auto; ',
                          }
                          )
     remeber_db = SelectField(
@@ -61,7 +61,7 @@ class PostgresForm(FlaskForm):
     submit = SubmitField("Подключиться",
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 40px; width: 50%; font-size: 14px'
+                             'style': 'height: auto; width: auto; font-size: 14px'
                          }
                          )
 
@@ -73,58 +73,58 @@ class ChooseForm(FlaskForm):
         choices=list_db,
         render_kw={
             'class': 'form-control',
-            'style': 'height: 30px; font-size: 14px'
+            'style': 'height: auto; font-size: 14px'
         }
     )
     submit = SubmitField("Далее",
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 40px; width: 10%; font-size: 14px'
+                             'style': 'height: auto; width: auto;font-size: 14px'
                          }
                          )
 
 class LoginForm(FlaskForm):
-    username = TextAreaField(label='Имя пользователя',
+    username = StringField(label='Никнейм',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: auto; width: auto; ',
                          }
                          )
     password = PasswordField(label='Пароль',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: auto; width: auto; ',
                          }
                          )
     submit = SubmitField("Войти",
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 40px; width: 50%; font-size: 14px'
+                             'style': 'height: auto; width: 40%; font-size: 14px'
                          }
                          )
 
 class RegForm(FlaskForm):
-    username = TextAreaField(label='Имя пользователя',
+    username = StringField(label='Имя пользователя',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: auto; width: auto; ',
                          }
                          )
     password = PasswordField(label='Пароль',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: auto; width: auto; ',
                          }
                          )
-    password2 = PasswordField(label='Пароль',
+    password2 = PasswordField(label='Проверка пароля',
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 30px; width: 25%; ',
+                             'style': 'height: auto; width: auto; ',
                          }
                          )
     submit = SubmitField("Зарегистрироваться",
                          render_kw={
                              'class': 'form-control',
-                             'style': 'height: 40px; width: 50%; font-size: 14px'
+                             'style': 'height: auto; width: auto; font-size: 14px'
                          }
                          )

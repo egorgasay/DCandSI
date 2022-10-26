@@ -5,22 +5,25 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>Main Page</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='css/main.css') }}" />
     <script src='main.js'></script>
 </head>
 <body>
-    <a href='/logout'><button>Выйти</button></a>
-    <a href='/disconnect'><button>Отключиться</button></a>
-    <h4><label for="text" style="font-size: 30px;">Доступные таблицы</label></h4>
-    {{ available_tables }}
+    <div class="blocktext3"><br>
+    <a href='/logout'><button >Выйти</button></a>
+    <a href='/disconnect'><button>Отключиться</button></a><br><br><br>
+    <h7><label for="text" style="font-size: 30px;">Доступные таблицы</label></h7><br>
+    {{ available_tables }}<br><br>
 {#    <input type="submit" name="submit" value="Выполнить">#}
     <form action="" method="post">
         {{ form.csrf_token() }}
         {% for field in form if field.name != 'csrf_token' %}
             {% if field.name != 'submit' %}
-                <h4 style="font-size: 30px;">{{ field.label }}</h4>
+                <h7 style="font-size: 30px;">{{ field.label }}</h7>
                 <p style="width: 50%;">
-                    {{ field }}
+                    <div class="elems" style="text-align: center;">
+                        {{ field }}
+                        </div>
                     {% for error in field.errors %}
                         {{ error }}
                     {% endfor %}
@@ -28,15 +31,23 @@
 
             {% endif %}
         {% endfor %}
-    {{ form.submit }}
+        <button><img src="{{ url_for('static', filename='img/play.png') }}" alt=""
+         style="vertical-align: middle" width="50" height="50"> </button></p>
+<!--        {{ form.submit }}-->
+<!--    <button type="submit" class="btn-run">Выполнить</button>-->
     </form>
     {% if table %}
-        <h4><label for="text" style="font-size: 30px;">Ответ</label></h4>
-        {{ table|safe }}
+        <h4><label for="text" style="font-size: 30px;">Ответ</label></h4><br><br><br><br><br>
+        <div class="blocktext4" style="text-align: center;">{{ table|safe }}</div>
 {#        {% for line in table %}#}
 {#            {{ line }}#}
 {#            <br>#}
 {#        {% endfor %}#}
     {% endif %}
+    <br><br>
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{cat}}">{{msg}}</div>
+    {% endfor %}
+</div>
 </body>
 </html>

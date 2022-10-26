@@ -1,0 +1,134 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:300);
+.btn-run {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.btn-run {
+  background: #333;
+  color: #ccc;
+  width: 200px;
+  height: 60px;
+  border: 0;
+  font-size: 18px;
+  border-radius: 4px;
+  font-family: "Raleway", sans-serif;
+  transition: 0.6s;
+  overflow: hidden;
+}
+.btn-run:focus {
+  outline: 0;
+}
+.btn-run:before {
+  content: "";
+  display: block;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);
+  width: 60px;
+  height: 100%;
+  left: 0;
+  top: 0;
+  opacity: 0.5;
+  filter: blur(30px);
+  transform: translateX(-100px) skewX(-15deg);
+}
+.btn-run:after {
+  content: "";
+  display: block;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  width: 30px;
+  height: 100%;
+  left: 30px;
+  top: 0;
+  opacity: 0;
+  filter: blur(5px);
+  transform: translateX(-100px) skewX(-15deg);
+}
+.btn-run:hover {
+  background: #338033;
+  cursor: pointer;
+}
+.btn-run:hover:before {
+  transform: translateX(300px) skewX(-15deg);
+  opacity: 0.6;
+  transition: 0.7s;
+}
+.btn-run:hover:after {
+  transform: translateX(300px) skewX(-15deg);
+  opacity: 1;
+  transition: 0.7s;
+}
+
+.flash {padding: 10px;}
+.flash.success {
+         border: 1px solid #21DB56;
+         background: #AEFFC5;
+}
+.flash.error {
+         border: 1px solid #FF4343;
+         background: #FF9C9C;
+}
+
+div.blocktext {
+    height: 45em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+div.blocktext2 {
+    height: 5em;
+    justify-content: center
+}
+
+div.login_label {
+    height: 3em;
+    justify-content: center
+}
+
+.logo {
+    justify-content: center;
+    display: block; /* Блочный элемент (для старых браузеров) */
+    text-align: center; /* Выравнивание по центру */
+    margin-top: 0; /* Отступ сверху */
+    margin-bottom: -55px;
+}
+
+.logo2 {
+    justify-content: center;
+    display: block; /* Блочный элемент (для старых браузеров) */
+    text-align: center; /* Выравнивание по центру */
+    margin-top: 0; /* Отступ сверху */
+    margin-bottom: -35px;
+}
+
+div.elems {
+    margin-bottom: -3px;
+    height: -13em;
+    justify-content: center
+}
+
+div.elems_with_labels {
+    margin-bottom: -10px;
+    height: -13em;
+    justify-content: center
+}
+
+div.blocktext3 {
+    height: 45em;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+div.blocktext4 {
+    height: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}

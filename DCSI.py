@@ -1,6 +1,7 @@
 import os
 import platform
 import sqlite3
+from time import sleep
 from clear_screen import clear
 from psycopg2 import Error
 from query import Query
@@ -14,7 +15,7 @@ from colorama import Style
 from forms import *
 #CommonForm, ChooseForm, PostgresForm, RegForm, LoginForm
 import random
-from flask import Flask, render_template, session, redirect, url_for, request, g, make_response
+from flask import Flask, render_template, session, redirect, url_for, request, g, make_response, flash
 
 
 def app_secret_key():
@@ -60,21 +61,28 @@ def connection():
 
 @app.route('/reg', methods=['POST', 'GET'])
 def reg():
+    if session.get('logged') == 'yes':
+        return redirect(url_for('web_app'))
     form = RegForm()
     if form.validate_on_submit():
         uname = form.username.data
         pswd = form.password.data
         pswd2 = form.password2.data
         conn = connect_db_for_auth()
+        text_for_user = ''
         if pswd == pswd2:
             connect = ConnectDB(conn, 'TempUserName')
             scode = connect.create_user(uname, pswd, conn)
             if scode == 'OK':
+                flash('Регистрация прошла успешно!',  category='success')
                 return redirect(url_for('login'))
             elif scode == 'The username is already taken':
-                return '<h1>The username is already taken</h1>'
-            return '<h1>Error</h1>'
-        return '<h1>Error</h1>'
+                text_for_user = 'Имя пользователя занято'
+            else:
+                text_for_user = 'Ошибка'
+        else:
+            text_for_user = 'Пароли не совпадают'
+        flash(text_for_user,  category='error')
     return render_template('reg.html', form=form)
 
 
@@ -84,9 +92,9 @@ def login():
     if not session.get('logged'):
         session.setdefault('logged', 'no')
     if not session.get('id'):
-        session.setdefault('id', random.randint(1, 1000))
+        session.setdefault('id', random.randint(1, 100000000))
     # print([log])
-    if session['logged'] == 'yes':
+    if session.get('logged') == 'yes':
         return redirect(url_for('web_app'))
     form = LoginForm()
     if form.validate_on_submit():
@@ -95,8 +103,6 @@ def login():
         conn = connect_db_for_auth()
         try:
             cur = conn.cursor()
-            #global connect_instance
-            #if connect_instance.get(str(session.get('id'))):
             try:
                 global connect_instance
                 if connect_instance:
@@ -106,21 +112,16 @@ def login():
                 connect_instance = dict()
             connect_instance[str(session.get('id'))] = ConnectDB(conn, uname)
             connect_instance[str(session.get('id'))] = [connect_instance[str(session.get('id'))], connect_instance[str(session.get('id'))].main_username, conn]
-            #else:
-            #    connect_instance
-            #connect_instance = ConnectDB(conn, uname)
-            #connect_instance['id']
-            #connect_instance =
-            # connect_instance[session.get('id')]
-            #[connect_instance, connect_instance.main_username]
             access = connect_instance[str(session.get('id'))][0].compare_passwords(uname, pswd, cur)
         except Exception as e:
             print(str(e))
-            return '<h1>Error</h1>'
-        print(access)
+            flash(f'{e}',  category='error')
+        print('aaa', access)
         if access == 'OK':
             session['logged'] = 'yes'
-        return redirect(url_for('web_app')) if access else '<h1>Wrong password</h1>'
+            return redirect(url_for('web_app'))
+        else:
+            flash('Неверное имя пользователя',  category='error')  if access == 'Wrong username' else flash('Неверный пароль',  category='error')
     return render_template('login.html', form=form)
 
 
@@ -145,8 +146,6 @@ def web_app():
                 pass
         except:
             data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
-    # data = connect.read_from_non_empty_file()
-    # print(logo)
     try:
         if data:
             pass
@@ -154,10 +153,8 @@ def web_app():
         data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
     except NameError:
         data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
-    print(data)
+    #print(data)
     if 'Wrong credentials' in data:
-        #conn = connect_db_for_auth()
-        #connect_instance = ConnectDB()
         if connect_instance[str(session.get('id'))][0]:
             return redirect(url_for('disconnect'))
         return redirect(url_for('start_page'))
@@ -167,7 +164,7 @@ def web_app():
         return redirect(url_for('start_page'))
     global con, info, cur
     con, info, cur = [*data]
-
+    #print(data)
     available_tables = tables_list(cur, info[-1])
     ListOfTablesForm = ''
     # if available_tables:
@@ -176,6 +173,7 @@ def web_app():
 
     if text:
         command = Query()
+        available_tables = tables_list(cur, info[0])
         try:
             cur.execute(text)
             # global data_from_query
@@ -184,20 +182,21 @@ def web_app():
             table = query_output_logic(
                 data_from_query, cur.description).get_html_string()
         except Exception as e:
+            table = ''
             e = str(e)
             if 'no results to fetch' in e:
-                table = '<h1>Нет данных для отображения</h1>'
+                flash('Нет данных для отображения')
             elif 'already exists' in e and 'relation' in e:
-                table = '<h1>Таблица уже существует</h1>'
+                flash('Таблица уже существует')
             else:
-                table = f'<h1>{e}</h1>'
+                flash(f'{e}',  category='error')
                 try:
                     cur.execute("rollback")
                 except:
-                    table += '<br><h2>Еще ошибка при rollback</h2>'
+                    flash('Ошибка при rollback', category='error')
             print(e)
-            available_tables = tables_list(cur, info[0])
         con.commit()
+        available_tables = tables_list(cur, info[-1])
         return render_template('index.html', available_tables=available_tables, form=form, table=table)
     return render_template('index.html', available_tables=available_tables, form=form)
 

@@ -3,26 +3,41 @@
     <head>
         <meta charset='utf-8'>
         <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-        <title>Auth</title>
+        <title>Регистрация</title>
         <meta name='viewport' content='width=device-width, initial-scale=1'>
-        <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+        <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='css/main.css') }}" />
         <script src='main.js'></script>
     </head>
     <body>
+    <div class="blocktext">
         <form method="post">
+            <figure class="logo2">
+                <img src="{{ url_for('static', filename='img/logo3.png') }}" width="150" height="150" alt="">
+              </figure>
+            <div class="login_label" style="text-align: center;">
+        <h1 style="font-size: 30px; text-align: center">Регистрация</h1></div>
             {{ form.csrf_token() }}
             {% for field in form if field.name != 'csrf_token' %}
                 {% if field.name != 'submit' %}
-                    <h4 style="font-size: 30px;">{{ field.label }}</h4>
+                    <h7 style="font-size: 21px;">{{ field.label }}</h7>
                     <p style="width: 50%;">
-                        {{ field }} 
+                        <div class="elems" style="text-align: center;">
+                        {{ field }}
+                        </div>
                         {% for error in field.errors %}
                             {{ error }}
                         {% endfor %}
                     </p>
                 {% endif %}
             {% endfor %}
-            {{ form.submit }}
+            {% for cat, msg in get_flashed_messages(True) %}
+            <div class="flash {{cat}}">{{msg}}</div><br>
+            {% endfor %}
+            <div class="blocktext2" style="text-align: center;">
+                {{ form.submit }} 
+            <a href="/login"><p>Уже есть аккаунт?<p></a>
+            </div>
         </form>
+    </div>
     </body>
 </html>
