@@ -156,6 +156,7 @@ def web_app():
     #print(data)
     if 'Wrong credentials' in data:
         if connect_instance[str(session.get('id'))][0]:
+            flash('Неверные данные', category='error')
             return redirect(url_for('disconnect'))
         return redirect(url_for('start_page'))
     if 'No data in table' in data:
