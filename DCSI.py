@@ -175,13 +175,12 @@ def web_app():
     if text:
         command = Query()
         available_tables = tables_list(cur, info[0])
+        data_from_query = ""
         try:
-            cur.execute(text)
-            # global data_from_query
+            cur.execute(f'SELECT * FROM ({text}) AS OUT LIMIT 1000')
             data_from_query = cur.fetchall()
-            descr_column = cur.description
-            table = query_output_logic(
-                data_from_query, cur.description).get_html_string()
+            # global data_from_query
+            #table = query_output_logic(data_from_query, cur.description).get_html_string()
         except Exception as e:
             table = ''
             e = str(e)
@@ -196,9 +195,11 @@ def web_app():
                 except:
                     flash('Ошибка при rollback', category='error')
             print(e)
+        descr_column = cur.description
         con.commit()
         available_tables = tables_list(cur, info[-1])
-        return render_template('index.html', available_tables=available_tables, form=form, table=table)
+        data_for_table = [list(i) for i in data_from_query]
+        return render_template('index.html', available_tables=available_tables, form=form, description=descr_column, data=data_for_table)
     return render_template('index.html', available_tables=available_tables, form=form)
 
 # @app.route('/api/data')
@@ -231,11 +232,44 @@ def postgres():
         print(form.errors)
     return render_template('example.html', form=form)
 
+@app.route('/main/<string:table_name>', methods=['POST', 'GET'])
+def get_all_data_from_table(table_name):
+    if not session.get('logged'):
+        session.setdefault('logged', 'no')
+    if session['logged'] != 'yes':
+        return redirect(url_for('login'))
+    cur = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())[2]
+    cur.execute(f'''SELECT * FROM "{table_name}" LIMIT 1000''')
+    data_from_query = cur.fetchall()
+    data = [list(i) for i in data_from_query]
+    #print(data)
+    return render_template('get_all_data_from_table.html', table_name=table_name, description=cur.description, data=data)
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
     session['logged'] = 'no'
     return redirect(url_for('login'))
+
+@app.route('/create_table', methods=['POST', 'GET'])
+def create_table():
+    return '<style>body {background:black}</style><div style="align-items: center; justify-content: center;display:flex;align-items: center;height:100%"><h1 style="text-align:center; color:white">В разработке</h1>'
+    #return render_template('create_table.html')
+
+@app.route('/delete_table', methods=['POST', 'GET'])
+def delete_table():
+    return '<style>body {background:black}</style><div style="align-items: center; justify-content: center;display:flex;align-items: center;height:100%"><h1 style="text-align:center; color:white">В разработке</h1>'
+    #return render_template('create_table.html')
+
+@app.route('/req_from_file', methods=['POST', 'GET'])
+def req_from_file():
+    return '<style>body {background:black}</style><div style="align-items: center; justify-content: center;display:flex;align-items: center;height:100%"><h1 style="text-align:center; color:white">В разработке</h1>'
+    #return render_template('create_table.html')
+
+@app.route('/simple_request', methods=['POST', 'GET'])
+def simple_request():
+    return '<style>body {background:black}</style><div style="align-items: center; justify-content: center;display:flex;align-items: center;height:100%"><h1 style="text-align:center; color:white">В разработке</h1>'
+    #return render_template('create_table.html')
+
 
 @app.route('/disconnect', methods=['POST', 'GET'])
 def disconnect():

@@ -1,0 +1,31 @@
+{% extends "base_for_all_data.html" %}
+{% block content %}
+      <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        {% for title in description %}
+        <th style="color: #FFFFFF">{{ title[0] }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for line in data %}
+        <tr>
+          {% for key in line %}
+          <td style="color: #FFFFFF">{{ key }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#data').DataTable({
+        columns: null,
+      });
+    });
+  </script>
+{% endblock %}

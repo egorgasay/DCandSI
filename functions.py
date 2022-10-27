@@ -148,10 +148,10 @@ def tables_list(cur, baseid):
                 cur.execute( """SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;""")
                 data_from_query = cur.fetchall()
                 if len(data_from_query) == 1:
-                    available_tables = data_from_query[0][0]
+                    available_tables = [data_from_query[0][0]]
                 else:
                     tables_names = [*(str(*i) for i in data_from_query)]
-                    available_tables = f"{', '.join(tables_names)}."
+                    available_tables = tables_names #f"{', '.join(tables_names)}."
             elif baseid == '2':
                 cur.execute("""SELECT name FROM sys.tables""")
                 data_from_query = cur.fetchall()

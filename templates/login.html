@@ -13,32 +13,29 @@
  <div class="blocktext">
         <form method="post">
             <figure class="logo">
-                <img src="{{ url_for('static', filename='img/logo2.png') }}" width="150" height="150" alt="">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" width="150" height="150" alt="">
               </figure>
             <div class="login_label" style="text-align: center;">
         <h1 style="font-size: 40px; text-align: center;">Вход</h1>
             </div>
+            <div style="font-size: 21px; height: 3em;">
             {{ form.csrf_token() }}
-            {% for field in form if field.name != 'csrf_token' %}
-                {% if field.name != 'submit' %}
-                    <h7 style="font-size: 21px; text-align: center">{{ field.label }}</h7>
-                    <p style="width: 50%;">
-                        <div class="elems" style="text-align: center;">
-                        {{ field }}
-                        </div>
-                        {% for error in field.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </p>
-                {% endif %}
-            {% endfor %}
+            {{ form.username.label }}:
+            &ensp;{{ form.username }}<br>
+            {{ form.password.label }}:
+            &ensp;&ensp;&nbsp;{{ form.password }}</div>
+<!--                    <p style="width: 50%;">-->
+<!--                        <div class="elems" style="text-align: center;">-->
+<!--                        {{ field }}-->
+<!--                        </div>-->
+
         {% for cat, msg in get_flashed_messages(True) %}
             <div class="flash {{cat}}">{{msg}}</div>
             <br>
         {% endfor %}
         <div class="blocktext2" style="text-align: center;">
             {{ form.submit }} 
-        <a href="/reg"><p>Еще не зарегистрированы?<p></a>
+        <a href="/reg" style="color: white; text-decoration: none; font-size: 26px;"><p> Еще не зарегистрированы?<p></a>
         </div>
         </form>
     </div>

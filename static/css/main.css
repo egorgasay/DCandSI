@@ -5,6 +5,10 @@
   top: 50%;
   transform: translateX(-50%) translateY(-50%);
 }
+body {
+    background-color: #000000;
+    color: #FFFFFF;
+}
 
 .btn-run {
   background: #333;
@@ -65,11 +69,13 @@
 .flash {padding: 10px;}
 .flash.success {
          border: 1px solid #21DB56;
-         background: #AEFFC5;
+         background: #21DB56;
+         color: #000000;
 }
 .flash.error {
          border: 1px solid #FF4343;
-         background: #FF9C9C;
+         background: #FF4343;
+         color: #000000;
 }
 
 div.blocktext {
@@ -81,12 +87,12 @@ div.blocktext {
 }
 
 div.blocktext2 {
-    height: 5em;
+    height: 3em;
     justify-content: center
 }
 
 div.login_label {
-    height: 3em;
+    height: 3.4em;
     justify-content: center
 }
 
@@ -104,6 +110,14 @@ div.login_label {
     text-align: center; /* Выравнивание по центру */
     margin-top: 0; /* Отступ сверху */
     margin-bottom: -35px;
+}
+
+.logo3 {
+    justify-content: center;
+    display: block; /* Блочный элемент (для старых браузеров) */
+    text-align: center; /* Выравнивание по центру */
+    margin-top: -40px; /* Отступ сверху */
+    margin-bottom: -15px;
 }
 
 div.elems {
@@ -126,7 +140,7 @@ div.blocktext3 {
 }
 
 div.blocktext4 {
-    height: 2em;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;

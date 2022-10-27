@@ -12,7 +12,7 @@
     <div class="blocktext">
         <form method="post">
             <figure class="logo2">
-                <img src="{{ url_for('static', filename='img/logo3.png') }}" width="150" height="150" alt="">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" width="150" height="150" alt="">
               </figure>
             <div class="login_label" style="text-align: center;">
         <h1 style="font-size: 30px; text-align: center">Регистрация</h1></div>
@@ -35,7 +35,7 @@
             {% endfor %}
             <div class="blocktext2" style="text-align: center;">
                 {{ form.submit }} 
-            <a href="/login"><p>Уже есть аккаунт?<p></a>
+            <a href="/login" style="color: white; text-decoration: none; font-size: 26px;"><p> Уже есть аккаунт?<p></a>
             </div>
         </form>
     </div>
