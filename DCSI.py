@@ -173,12 +173,17 @@ def web_app():
     #     print(double_tables)
 
     if text:
+        print("Поступил запрос:")
+        print(text)
         command = Query()
         available_tables = tables_list(cur, info[0])
         data_from_query = ""
         try:
-            cur.execute(f'SELECT * FROM ({text}) AS OUT LIMIT 1000')
-            data_from_query = cur.fetchall()
+            if 'SELECT' in text:
+            	cur.execute(text)
+            else:
+            	cur.execute(text)
+            data_from_query = cur.fetchall()[:1000]
             # global data_from_query
             #table = query_output_logic(data_from_query, cur.description).get_html_string()
         except Exception as e:
@@ -239,7 +244,7 @@ def get_all_data_from_table(table_name):
     if session['logged'] != 'yes':
         return redirect(url_for('login'))
     cur = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())[2]
-    cur.execute(f'''SELECT * FROM "{table_name}" LIMIT 1000''')
+    cur.execute(f'''SELECT * FROM public."{table_name}" LIMIT 1000''')
     data_from_query = cur.fetchall()
     data = [list(i) for i in data_from_query]
     #print(data)

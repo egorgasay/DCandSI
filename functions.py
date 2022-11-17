@@ -145,7 +145,7 @@ def tables_list(cur, baseid):
     else:
         try:
             if baseid == 'PSQL':
-                cur.execute( """SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name;""")
+                cur.execute( """SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name;""")
                 data_from_query = cur.fetchall()
                 if len(data_from_query) == 1:
                     available_tables = [data_from_query[0][0]]

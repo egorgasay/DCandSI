@@ -5,7 +5,7 @@ from wtforms import SelectField, SubmitField, HiddenField, TextAreaField, Passwo
 class CommonForm(FlaskForm):
     text = TextAreaField(label='Текст запроса',
                          render_kw={
-                             'style': 'height: 160px; width: 50%; font-size: 26px; background:#000000; color:#FFFFFF;',
+                             'style': 'height: 160px; width: 80%; font-size: 26px; background:#000000; color:#FFFFFF;',
                          }
                          )
     submit = SubmitField("Выполнить",
