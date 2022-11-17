@@ -2,77 +2,78 @@
 # Database Controller &amp; Sql Interpreter
 ![alt text](https://i.imgur.com/aRevhdh.png)
 
-❔ _A script for creating, filling in and deleting database tables._
+❔ _Веб-приложение для упрощения работы с таблицами_
 
-📔 **Makes it easier** to work with queries.  
-🤩 You can also use it even if you **don't know SQL syntax**!  
-✅ Connection to **PostgreSQL** and **Microsoft SQL Server** databases is currently available.  
+📔 **Упрощает** работу с запросами.   
+🤩 Вы также можете использовать его, даже если вы **не знаете синтаксис SQL** !     
+✅ В настоящее время доступно подключение к базам данных **PostgreSQL** и **Microsoft SQL Server**.   
 
+     
+🌄 Вид главного меню.      
+  
 
-🌄 View of the main menu.
-![alt text](https://i.imgur.com/0W5Vrfk.png)
+![image](https://user-images.githubusercontent.com/102957432/202497151-f5ec0509-2751-4b85-8e7a-cf7c18b707a5.png)  
 
-🗝 You don't need to enter database information every time _(only password or connection string)_.
-
-
-https://user-images.githubusercontent.com/102957432/179783919-20f77ec5-ba2e-42b6-b369-3a6331d9aca3.mp4
-
+🗝 Вам **не нужно каждый раз вводить** информацию от базы данных.
 
 
-🚀 **Three options** for executing an SQL query.  
-![alt text](https://i.imgur.com/ogvxSpa.png)  
-✨ You can simply **enter the query at the command prompt** in the main menu or by typing 3 and 2!  
+![image](https://user-images.githubusercontent.com/102957432/202497207-03a7ff4c-25db-4ac9-a3da-8c28ab11d7f7.png)
 
-https://user-images.githubusercontent.com/102957432/179781600-22153408-93ad-485e-9e0a-62904e2007de.mp4  
+
+💫 **Мгновенный** вывод результата запроса.    
+
+![image](https://user-images.githubusercontent.com/102957432/202512717-073af53e-cf6c-4cf3-b8d3-49f9b9560e23.png)
+
+
+✨ Ускоренное написание запросов за счет **удобного поля** для редактирования!  
+
+![image](https://user-images.githubusercontent.com/102957432/202509677-3a8b08e0-90c6-4027-9c92-1f152bd55f97.png)
   
    
 
 
 
-💫 The result is output **instantly**, after pressing two ENTER or entering EOF on the last line.  
-![alt text](https://i.imgur.com/j6NUSVI.png)
-
-
-📚 You can **create** new tables **without knowledge of SQL**!  
+💫 **Быстрый доступ** к любой таблице.    
   
 
-https://user-images.githubusercontent.com/102957432/179798527-79844254-07ff-4a37-9c47-f879ded69df5.mp4
+![image](https://user-images.githubusercontent.com/102957432/202497935-f9d97894-b7c9-4d0d-b2fc-74f842f17538.png)
+
+
+📚 Вы можете **создавать** новые таблицы **без знания SQL**!   
+  
+
+![image](https://user-images.githubusercontent.com/102957432/202511885-ad9422ee-ea66-4eda-b4eb-5c01c3d44c35.png)
 
   
 
 
-🖊 And also **instantly** fill them with new data.  
+🖊 А также **мгновенно** заполняйте их новыми данными.
 
 
-https://user-images.githubusercontent.com/102957432/179799507-14aee80d-c618-40cc-baba-44ad015640d4.mp4
+![image](https://user-images.githubusercontent.com/102957432/202511885-ad9422ee-ea66-4eda-b4eb-5c01c3d44c35.png)
 
 
 
 
-👨🏻‍💻 Write a request and **don't think about the architecture**, we took care of it!  
+👨🏻‍💻 Напишите запрос и **не думайте об архитектуре**, мы позаботились об этом!
   
   
-https://user-images.githubusercontent.com/102957432/179789317-1f6b0582-7675-47b7-ad54-9818f7b18580.mp4
+![image](https://user-images.githubusercontent.com/102957432/202511885-ad9422ee-ea66-4eda-b4eb-5c01c3d44c35.png)
 
 
-# Install Windows
+# Установка Windows
 ```
 git clone https://github.com/egorgasay/DCandSI
 py -m pip install -r requirements.txt
 ```
-# Install Linux
+# Установка Linux
 ```
 git clone https://github.com/egorgasay/DCandSI
 bash install_linux.sh
 ```
 
-# Usage
+# Использование
 ```
 py DCSI.py (Windows)
 python3.10 DCSI.py (Linux)
 ```
-After launching, you can type text of query or choose one of 1-4 options.
-
-# Requirements
-1. Python 3.10 or higher.
-2. Graphical interface (optional).
