@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Главная</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='css/main.css') }}" />
+    <script src='main.js'></script>
+</head>
+<body>
+    <div class="blocktext3"><br>
+    <a href='/logout'><button >Выйти</button></a>
+    <a href='/disconnect'><button>Отключиться</button></a><br><br><br>
+        <figure class="logo3">
+                <img src="{{ url_for('static', filename='img/main_logo.png') }}" width="300" height="300" alt="">
+              </figure>
+    <h7><label for="text" style="font-size: 40px;">Выберите таблицу для удаления</label></h7><br>
+<!--    {{ available_tables }}-->
+        {% for table in available_tables %}
+          <a href='/delete_table/{{ table }}' style="color: white; text-decoration: none; font-size: 26px;">{{ table+', ' if table != available_tables[-1] else table}}</a>
+       {% endfor %}
+    </div>
+</body>
+</html>
