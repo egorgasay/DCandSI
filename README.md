@@ -70,6 +70,7 @@ py -m pip install -r requirements.txt
 ```
 git clone https://github.com/egorgasay/DCandSI
 bash install_linux.sh
+python3.10 -m pip install -r requirements_linux.txt
 ```
 
 # Использование
