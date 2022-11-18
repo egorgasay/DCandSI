@@ -262,8 +262,26 @@ def create_table():
 
 @app.route('/delete_table', methods=['POST', 'GET'])
 def delete_table():
-    return '<style>body {background:black}</style><div style="align-items: center; justify-content: center;display:flex;align-items: center;height:100%"><h1 style="text-align:center; color:white">В разработке</h1>'
-    #return render_template('create_table.html')
+    data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
+    cur, baseid = data[2], data[1][-1]
+    available_tables = tables_list(cur, baseid)
+    return render_template('delete_table.html', available_tables=available_tables)
+    # return '<style>body {background:black}</style><div style="align-items: center; justify-content: center;display:flex;align-items: center;height:100%"><h1 style="text-align:center; color:white">В разработке</h1>'
+    # return render_template('create_table.html')
+
+@app.route('/delete_table/<string:table_name>', methods=['POST', 'GET'])
+def deleting_table(table_name):
+    data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
+    cur = data[2]
+    conn = data[0]
+    try:
+        cur.execute(f'''DROP TABLE "{table_name}" ''')
+        conn.commit()
+    except:
+        flash('Ошибка при удалению таблицы', category='error')
+    else:
+        flash('Таблица успешно удалена', category='success')
+    return redirect(url_for('web_app'))
 
 @app.route('/req_from_file', methods=['POST', 'GET'])
 def req_from_file():

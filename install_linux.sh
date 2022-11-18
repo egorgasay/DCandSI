@@ -25,12 +25,9 @@ else
         echo 'We can not install packages in your system automatically'
         echo 'Please, install it manualy'
         echo 'Packages: unixodbc-dev, libpq-dev, docker'
-        echo 'After installation: bash run_linux.sh'
 	exit
     fi
     apt-get install unixodbc-dev -y
     apt-get install libpq-dev -y
-    apt-get install docker -y
     python3.10 -m pip install -r requirements.txt
-    docker build . -t dcsi
 fi
