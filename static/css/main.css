@@ -66,18 +66,25 @@ body {
   transition: 0.7s;
 }
 
-.flash {padding: 10px;}
+.flash {padding: 0px;}
 .flash.success {
+         padding: 10px;
          border: 1px solid #21DB56;
          background: #21DB56;
          color: #000000;
 }
 .flash.error {
+         padding: 10px;
          border: 1px solid #FF4343;
          background: #FF4343;
          color: #000000;
 }
-
+.flash.large_error {
+         padding: 2px;
+         border: 1px solid #FF4343;
+         background: #FF4343;
+         color: #000000;
+}
 div.blocktext {
     height: 45em;
     display: flex;

@@ -175,26 +175,24 @@ def web_app():
     if text:
         print("Поступил запрос:")
         print(text)
-        command = Query()
-        available_tables = tables_list(cur, info[0])
+        #command = Query()
+        #available_tables = tables_list(cur, info[0])
         data_from_query = ""
         try:
-            if 'SELECT' in text:
-            	cur.execute(text)
-            else:
-            	cur.execute(text)
+            cur.execute(text)
             data_from_query = cur.fetchall()[:1000]
             # global data_from_query
             #table = query_output_logic(data_from_query, cur.description).get_html_string()
         except Exception as e:
-            table = ''
+            #table = ''
             e = str(e)
             if 'no results to fetch' in e:
                 flash('Нет данных для отображения')
             elif 'already exists' in e and 'relation' in e:
                 flash('Таблица уже существует')
             else:
-                flash(f'{e}',  category='error')
+                for eline in e.split('\n'):
+                    flash(f'{eline}',  category='large_error')
                 try:
                     cur.execute("rollback")
                 except:
