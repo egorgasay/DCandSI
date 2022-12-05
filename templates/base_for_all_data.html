@@ -7,15 +7,37 @@
     <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='css/main.css') }}" />
   </head>
   <body>
-    <div class="container"><br>
-      <a href='/main'><button >Вернуться назад</button></a>
-      <h1>Таблица: {{ table_name }}</h1>
-      <hr>
-      {% block content %}{% endblock %}
-    </div>
+  {% block mininav %}{% endblock %}
+  <div class="container">
+    <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        {% for title in description %}
+        <th style="color: #FFFFFF">{{ title[0] }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for line in data %}
+        <tr>
+          {% for key in line %}
+          <td style="color: #FFFFFF">{{ key }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
-    {% block scripts %}{% endblock %}
+  <script>
+    $(document).ready(function () {
+      $('#data').DataTable({
+        columns: null,
+          "aaSorting": []
+      });
+    });
+  </script>
   </body>
 </html>

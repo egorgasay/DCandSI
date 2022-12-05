@@ -19,6 +19,7 @@ class ConnectDB:
     """
 
     def __init__(self, con, main_username):
+        self.info = None
         self.con = con
         self.cur = con.cursor()
         self.main_username = main_username
@@ -148,7 +149,7 @@ class ConnectDB:
                 return 'No data in table'
                 #empty(bd_choice, info)
             else:
-                info = data_from_query
+                self.info = info = data_from_query
 
             # print(info)
             if info[-1] == 'PSQL':
@@ -215,11 +216,12 @@ class ConnectDB:
                 exit(0)
             print("Opened successfully")
             try:
-                cur = self.con.cursor()
+                self.cur = self.con.cursor()
             except Exception as e:
                 print(Fore.RED + f"{e}" + Style.RESET_ALL)
                 exit(0)
-            return self.con, info, cur
+            self.info = info
+            return self.con, info, self.cur
         except psycopg2.OperationalError:
             print(f'Could not connect to database server. Please, check your credentials')
             exit(0)

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>DCandSI</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+    <link rel="stylesheet" type='text/css' href="{{ url_for('static', filename='css/main.css') }}" />
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js'></script><script  src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</head>
+<body>
+<div class="blocktext4">
+<a href='/logout'><button style="background-color:#000000; color: #000000; border: 1px solid #000000"><img src="{{ url_for('static', filename='img/logout.png') }}" alt=""
+         style="background-color:#000000;" width="70" height="70"></button></a>
+<a href='/disconnect'><button style="background-color:#000000; color: #000000; border: 1px solid #000000"><img src="{{ url_for('static', filename='img/disconnect.png') }}" alt=""
+         style="background-color:#000000;" width="70" height="70"></button></a>
+{#<a href='/logout'><button >Выйти</button></a>#}
+{#    <a href='/disconnect'><button>Отключиться</button></a>#}
+        <a href='/main'><button >Главная</button></a>
+        <a href='/create_table'><button >Создать таблицу</button></a>
+        <a href='/delete_table'><button >Удалить таблицу</button></a>
+        <a href='/req_from_file'><button >Выполнить из файла</button></a>
+        <a href='/list_of_tables'><button >Список таблиц</button></a>
+        <a href='/querys'><button >Список запросов</button></a>
+        <a href='/req_from_file'><button >Конструктор запросов</button></a>
+        <a href='/simple_request'><button >Простой запрос</button></a>
+</div>
+{% block content %}
+{% endblock %}
+</body>
+</html>

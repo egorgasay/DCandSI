@@ -1,3 +1,4 @@
+import datetime
 import os
 import platform
 import sqlite3
@@ -116,7 +117,7 @@ def login():
         except Exception as e:
             print(str(e))
             flash(f'{e}',  category='error')
-        print('aaa', access)
+        print('Статус авторизации:', access)
         if access == 'OK':
             session['logged'] = 'yes'
             return redirect(url_for('web_app'))
@@ -127,64 +128,45 @@ def login():
 
 @app.route('/main', methods=['POST', 'GET'])
 def web_app():
-    print(session.get('user_id'))
-    log = ''
-    # print(1)
     if not session.get('logged'):
         return redirect(url_for('login'))
-    print(2)
     if session['logged'] != 'yes':
         return redirect(url_for('login'))
     form = CommonForm()
-    text = form.text.data
-    available_tables = ''
-    print(3)
-    if not text and request.method == 'GET' or text == '':
-        try:
-            #global data
-            if data:
-                pass
-        except:
-            data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
     try:
-        if data:
-            pass
-    except TypeError:
-        data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
-    except NameError:
-        data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
-    #print(data)
-    if 'Wrong credentials' in data:
-        if connect_instance[str(session.get('id'))][0]:
+        text = request.form['text']
+        #print(text)
+    except:
+        text = ""
+    print("Проверка наличия существующего подключения")
+    data = conn_check()
+    try:
+        if 'sqlite3' in str(data[0]).lower() or 'Wrong credentials' in data:
             flash('Неверные данные', category='error')
             return redirect(url_for('disconnect'))
-        return redirect(url_for('start_page'))
+        conn_id = str(data[0]).split(" ")[3]
+    except IndexError:
+        return redirect(url_for('disconnect'))
+
+    print("Id подключения -", conn_id)
     if 'No data in table' in data:
         return redirect(url_for('start_page'))
     if 'Nothing' in data:
         return redirect(url_for('start_page'))
     global con, info, cur
     con, info, cur = [*data]
-    #print(data)
     available_tables = tables_list(cur, info[-1])
-    ListOfTablesForm = ''
-    # if available_tables:
-    #     double_tables = [(i, i) for i in available_tables_list]
-    #     print(double_tables)
-
     if text:
         print("Поступил запрос:")
         print(text)
-        #command = Query()
-        #available_tables = tables_list(cur, info[0])
         data_from_query = ""
         try:
+            username = connect_instance[str(session.get('id'))][0].main_username
+            record_query(username, text)
             cur.execute(text)
             data_from_query = cur.fetchall()[:1000]
-            # global data_from_query
-            #table = query_output_logic(data_from_query, cur.description).get_html_string()
+            con.commit()
         except Exception as e:
-            #table = ''
             e = str(e)
             if 'no results to fetch' in e:
                 flash('Нет данных для отображения')
@@ -199,7 +181,6 @@ def web_app():
                     flash('Ошибка при rollback', category='error')
             print(e)
         descr_column = cur.description
-        con.commit()
         available_tables = tables_list(cur, info[-1])
         data_for_table = [list(i) for i in data_from_query]
         return render_template('index.html', available_tables=available_tables, form=form, description=descr_column, data=data_for_table)
@@ -209,11 +190,69 @@ def web_app():
 # def data():
 #     return {'data': [row.to_dict() for row in data_from_query]}
 
+def record_query(username, query):
+    conn = connect_db_for_auth()
+    try:
+        time_now = datetime.datetime.now()
+        conn.cursor().execute(
+            f"""INSERT INTO querys (username, query, date) VALUES ("{username}","{query}", '{time_now}')""")
+        conn.commit()
+        print('Текст запроса успешно сохранен в базу данных')
+    except sqlite3.ProgrammingError:
+        print('sqlite3.ProgrammingError')
+    except TypeError:
+        pass
+
+def conn_check():
+    '''Проверка наличия существующего подключения'''
+    if not connect_instance[str(session.get('id'))][0].info:
+        data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
+    else:
+         data_obj = connect_instance[str(session.get('id'))][0]
+         data = [data_obj.con, data_obj.info, data_obj.cur]
+    return data
 
 @app.errorhandler(404)
 def pageNotFound(error):
     return redirect(url_for('web_app'))
 
+@app.route('/querys', methods=['post', 'get'])
+def querys():
+    if not session.get('logged'):
+        session.setdefault('logged', 'no')
+    if session['logged'] != 'yes':
+        return redirect(url_for('login'))
+    conn = connect_db_for_auth()
+    main_user = conn_check()[1]
+    querys_list = ""
+    try:
+        cur = conn.cursor()
+        cur.execute(f'''SELECT query, date FROM querys WHERE username = "{main_user[0]}";''')
+        querys_list = cur.fetchall()
+    except Exception as e:
+        print(e)
+    return render_template('querys.html', querys_list=querys_list, len=len)
+
+# def check_is_logged_in():
+#     if not session.get('logged'):
+#         session.setdefault('logged', 'no')
+#     if session['logged'] != 'yes':
+#         return redirect(url_for('login'))
+
+@app.route('/list_of_tables', methods=['post', 'get'])
+def list_of_tables():
+    if not session.get('logged'):
+        session.setdefault('logged', 'no')
+    if session['logged'] != 'yes':
+        return redirect(url_for('login'))
+    if not session.get('logged'):
+        session.setdefault('logged', 'no')
+    if session['logged'] != 'yes':
+        return redirect(url_for('login'))
+    data = conn_check()
+    cur, baseid = data[2], data[1][-1]
+    available_tables = tables_list(cur, baseid)
+    return render_template('list_of_tables.html', available_tables=available_tables)
 
 @app.route('/postgres', methods=['post', 'get'])
 def postgres():
@@ -224,12 +263,9 @@ def postgres():
     form = PostgresForm()
     if form.validate_on_submit():
         conn = connect_db_for_auth()
-        # session['main_username']
         connect = connect_instance[str(session.get('id'))][0]
         connect.record_user_db(conn, form.hostname.data, form.bdname.data,
                                form.username.data, form.password.data, form.port.data, 'PSQL')
-        # connect = ConnectDB
-        # data = connect.connec_db()
         return redirect(url_for('web_app'))
     else:
         print(form.errors)
@@ -241,7 +277,7 @@ def get_all_data_from_table(table_name):
         session.setdefault('logged', 'no')
     if session['logged'] != 'yes':
         return redirect(url_for('login'))
-    cur = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())[2]
+    cur = conn_check()[2]
     cur.execute(f'''SELECT * FROM public."{table_name}" LIMIT 1000''')
     data_from_query = cur.fetchall()
     data = [list(i) for i in data_from_query]
@@ -260,18 +296,19 @@ def create_table():
 
 @app.route('/delete_table', methods=['POST', 'GET'])
 def delete_table():
-    data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
+    if not session.get('logged'):
+        session.setdefault('logged', 'no')
+    if session['logged'] != 'yes':
+        return redirect(url_for('login'))
+    data = conn_check()
     cur, baseid = data[2], data[1][-1]
     available_tables = tables_list(cur, baseid)
     return render_template('delete_table.html', available_tables=available_tables)
-    # return '<style>body {background:black}</style><div style="align-items: center; justify-content: center;display:flex;align-items: center;height:100%"><h1 style="text-align:center; color:white">В разработке</h1>'
-    # return render_template('create_table.html')
 
 @app.route('/delete_table/<string:table_name>', methods=['POST', 'GET'])
 def deleting_table(table_name):
-    data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
-    cur = data[2]
-    conn = data[0]
+    data = conn_check()
+    cur, conn = data[2], data[0]
     try:
         cur.execute(f'''DROP TABLE "{table_name}" ''')
         conn.commit()
@@ -294,7 +331,7 @@ def simple_request():
 
 @app.route('/disconnect', methods=['POST', 'GET'])
 def disconnect():
-    main_username, conn = connect_instance[str(session.get('id'))][1], connect_db_for_auth()
+    main_username, conn = connect_instance[str(session.get('id'))][0].main_username, connect_db_for_auth()
     conn.cursor().execute(
         f"""DELETE FROM Data WHERE db_name = (SELECT db_name FROM Data WHERE username = '{main_username}')  """)
     conn.commit()

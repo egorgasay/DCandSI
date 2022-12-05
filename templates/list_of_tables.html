@@ -5,10 +5,10 @@
         <figure class="logo3">
                 <img src="{{ url_for('static', filename='img/main_logo.png') }}" width="300" height="300" alt="">
               </figure>
-    <h7><label for="text" style="font-size: 40px;">Выберите таблицу для удаления</label></h7><br>
+    <h7><label for="text" style="font-size: 40px;">Выберите таблицу</label></h7><br>
 <!--    {{ available_tables }}-->
         {% for table in available_tables %}
-          <a href='/delete_table/{{ table }}' style="color: white; text-decoration: none; font-size: 26px;">{{ table+', ' if table != available_tables[-1] else table}}</a>
+          <a href='/main/{{ table }}' style="color: white; text-decoration: none; font-size: 26px;">{{ table+', ' if table != available_tables[-1] else table}}</a>
        {% endfor %}
     </div>
 {% endblock %}

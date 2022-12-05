@@ -5,6 +5,12 @@ from wtforms import SelectField, SubmitField, HiddenField, TextAreaField, Passwo
 class CommonForm(FlaskForm):
     text = TextAreaField(label='Текст запроса',
                          render_kw={
+                            'placeholder' : "Enter HTML Source Code",
+                            'id' : "editing",
+                            'spellcheck' : "false",
+                            'oninput' : "update(this.value); sync_scroll(this);",
+                            'onscroll' : "sync_scroll(this);",
+                            'onkeydown' : "check_tab(this, event);",
                              'style': 'height: 160px; width: 80%; font-size: 26px; background:#000000; color:#FFFFFF;',
                          }
                          )
