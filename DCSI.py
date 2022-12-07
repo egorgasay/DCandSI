@@ -161,9 +161,11 @@ def web_app():
         print(text)
         data_from_query = ""
         try:
+            dur = 0
             username = connect_instance[str(session.get('id'))][0].main_username
-            record_query(username, text)
+            start = datetime.datetime.now()
             cur.execute(text)
+            dur = datetime.datetime.now() - start
             data_from_query = cur.fetchall()[:1000]
             con.commit()
         except Exception as e:
@@ -180,6 +182,10 @@ def web_app():
                 except:
                     flash('Ошибка при rollback', category='error')
             print(e)
+        try:
+            record_query(username, text, dur, info[-1])
+        except Exception as e:
+            print(e)
         descr_column = cur.description
         available_tables = tables_list(cur, info[-1])
         data_for_table = [list(i) for i in data_from_query]
@@ -190,12 +196,13 @@ def web_app():
 # def data():
 #     return {'data': [row.to_dict() for row in data_from_query]}
 
-def record_query(username, query):
+def record_query(username, query, dur, bd):
     conn = connect_db_for_auth()
     try:
         time_now = datetime.datetime.now()
         conn.cursor().execute(
-            f"""INSERT INTO querys (username, query, date) VALUES ("{username}","{query}", '{time_now}')""")
+            f"""INSERT INTO querys (username, query, date, dur, bd) 
+            VALUES ("{username}","{query}", '{time_now}', '{dur}', '{bd}')""")
         conn.commit()
         print('Текст запроса успешно сохранен в базу данных')
     except sqlite3.ProgrammingError:
@@ -227,11 +234,12 @@ def querys():
     querys_list = ""
     try:
         cur = conn.cursor()
-        cur.execute(f'''SELECT query, date FROM querys WHERE username = "{main_user[0]}";''')
+        cur.execute(f'''SELECT query, date, dur, bd FROM querys WHERE username = "{main_user[0]}";''')
         querys_list = cur.fetchall()
+        #print(querys_list)
     except Exception as e:
         print(e)
-    return render_template('querys.html', querys_list=querys_list, len=len)
+    return render_template('querys.html', querys_list=querys_list[::-1], len=len)
 
 # def check_is_logged_in():
 #     if not session.get('logged'):

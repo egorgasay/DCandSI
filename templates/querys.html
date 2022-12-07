@@ -6,11 +6,11 @@
                 <img src="{{ url_for('static', filename='img/main_logo.png') }}" width="300" height="300" alt="">
               </figure>
     <h7><label for="text" style="font-size: 40px;">История запросов</label></h7><br>
-        {% for query, date in querys_list %}
-            {{ date }}
-             <pre id="highlighting" aria-hidden="true"  style=" position: static; height: {{ (len(query.split("\n"))+1)*45 }}px">
+        {% for query, date, dur, bd in querys_list %}
+            {{ date +" База данных: " + bd }}
+             <pre id="highlighting" aria-hidden="true"  style=" position: static; height: {{ (len(query.split("\n"))+3)*45 }}px">
             <code class="language-sql" id="highlighting-content" style="position: absolute; ">
-            {{ '\n'+query }}
+            {{ '\n'+query+'\nВремя выполнения: '+dur }}
             </code>
             </pre>
             <br>
