@@ -8,9 +8,9 @@
     <h7><label for="text" style="font-size: 40px;">История запросов</label></h7><br>
         {% for query, date, dur, bd in querys_list %}
             {{ date +" База данных: " + bd }}
-             <pre id="highlighting" aria-hidden="true"  style=" position: static; height: {{ (len(query.split("\n"))+3)*45 }}px">
+             <pre id="highlighting" aria-hidden="true"  style=" position: static; height: {{ (len(query.split("\n"))+3)*40 }}px">
             <code class="language-sql" id="highlighting-content" style="position: absolute; ">
-            {{ '\n'+query+'\nВремя выполнения: '+dur }}
+            {{ 'Время выполнения: '+dur+'\n'+query }}
             </code>
             </pre>
             <br>
