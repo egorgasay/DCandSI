@@ -2,17 +2,8 @@ import datetime
 import os
 import platform
 import sqlite3
-from time import sleep
-from clear_screen import clear
-from psycopg2 import Error
-from query import Query
-from create import Creator
-from delete import Deletor
 from connect import ConnectDB
 from functions import create_and_execute_ready_query, query_output_logic, tables_list
-from colorama import init, Fore
-from colorama import Back
-from colorama import Style
 from forms import *
 #CommonForm, ChooseForm, PostgresForm, RegForm, LoginForm
 import random
@@ -140,6 +131,7 @@ def web_app():
         text = ""
     print("Проверка наличия существующего подключения")
     data = conn_check()
+    print(data)
     try:
         if 'sqlite3' in str(data[0]).lower() or 'Wrong credentials' in data:
             flash('Неверные данные', category='error')
@@ -213,6 +205,7 @@ def record_query(username, query, dur, bd):
 def conn_check():
     '''Проверка наличия существующего подключения'''
     if not connect_instance[str(session.get('id'))][0].info:
+        print('Подключения не существует')
         data = connect_instance[str(session.get('id'))][0].connec_db(connect_db_for_auth())
     else:
          data_obj = connect_instance[str(session.get('id'))][0]

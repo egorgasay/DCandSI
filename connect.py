@@ -76,78 +76,21 @@ class ConnectDB:
 
     def connec_db(self, conn):
         try:
-            # TODO: сделать обработку неполного ввода
-            # clear()
             try:
                 cur = conn.cursor()
-                print(self.main_username)
                 data_from_query = cur.execute(
                     f"""SELECT * FROM Data WHERE username = '{self.main_username}'""")
                 data_from_query = tuple(data_from_query.fetchone())
-                # print(data_from_query)
-                #empty_or_not = os.stat('info.txt')
             except Exception as e:
                 print('Тут ничего нет')
                 print(str(e))
                 if 'NoneType' in str(e):
-                    return 'Nothing'
+                    return None, self.info, None
                 # abort(403)
             empty_or_not = 2 if len(data_from_query) > 0 else 0
 
-            # def add_record():
-            #     cur
-            def read_from_non_empty_file(info=[]):
-                with open('info.txt', 'r') as f:
-                    for line in f:
-                        info.append(line[:-1])
-                    return info
-
-            def empty(bd_choice, info):
-                #global bd_choice
-                # bd_choice = input('1 PostgreSQL\n2 MS SQL Server\n3 Access\n# ')
-                if bd_choice == '1':
-                    with open('info.txt', 'w+') as f:
-                        f.write('1' + '\n')
-                        f.write(info[0] + '\n')
-                        f.write(info[1] + '\n')
-                        f.write(info[2] + '\n')
-                        f.write(info[3] + '\n')
-                elif bd_choice == '2':
-                    print("1 Connection string for MS SQL Server")
-                    print("2 Connection credentials for MS SQL Server")
-                    global str_or_cred
-                    str_or_cred = input("# ")
-                    if str_or_cred == '1':
-                        with open('info.txt', 'w+') as f:
-                            f.write('2' + '\n')
-                            f.write('1' + '\n')
-                    elif str_or_cred == '2':
-                        with open('info.txt', 'w+') as f:
-                            f.write('2' + '\n')
-                            f.write('2' + '\n')
-                            f.write(input("Server: ") + '\n')
-                            f.write(input("Database: ") + '\n')
-                            global trusted_connection
-                            trusted_connection = input(
-                                "Trusted_Connection: True - default ")
-                            if trusted_connection.lower() == 'false':
-                                f.write('n' + '\n')
-                                f.write(input("User name: ") + '\n')
-                            else:
-                                f.write('y' + '\n')
-                    else:
-                        return 'Error'
-                elif bd_choice == '3':
-                    with open('info.txt', 'w+') as f:
-                        f.write('3' + '\n')
-                        f.write(info[0] + '\n')
-                else:
-                    return 'Error'
-
-                return read_from_non_empty_file()
             if empty_or_not == 0:
                 return 'No data in table'
-                #empty(bd_choice, info)
             else:
                 self.info = info = data_from_query
 
@@ -162,7 +105,7 @@ class ConnectDB:
                         port=info[-2]
                     )
                 except Exception as e:
-                    print(str(e))
+                    print(str(e), 'Wrong credentials')
                     return 'Wrong credentials'
             # postgres or ms sql
             elif info[0] == '2':
@@ -220,8 +163,7 @@ class ConnectDB:
             except Exception as e:
                 print(Fore.RED + f"{e}" + Style.RESET_ALL)
                 exit(0)
-            self.info = info
-            return self.con, info, self.cur
+            return self.con, self.info, self.cur
         except psycopg2.OperationalError:
             print(f'Could not connect to database server. Please, check your credentials')
             exit(0)
